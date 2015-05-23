@@ -1,0 +1,17 @@
+{
+  "name": "LCV",
+  "version": "1.0.0",
+  "description": "website : les comediens voyageurs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prisme/lcv.git"
+  },
+  "author": "prisme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prisme/lcv/issues"
+  },
+  "devDependencies": {
+    "browserify": "^10.2.1"
+  }
+}
