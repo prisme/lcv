@@ -1,5 +1,5 @@
-[ ] gulp : browserify, autoprefixer
-[ ] libs : gsap, swiper, nanoscroll …
+[x] gulp : browserify, autoprefixer
+[x] libs : gsap, swiper, nanoscroll …
 
 [ ] home 
 [ ] menu

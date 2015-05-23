@@ -12,7 +12,6 @@
     "url": "https://github.com/prisme/lcv/issues"
   },
   "devDependencies": {
-    "autoprefixer": "^5.1.1",
     "browserify": "^10.2.1",
     "gulp": "^3.8.11",
     "gulp-cssnext": "^1.0.0",
@@ -27,6 +26,8 @@
     "watchify": "^3.1.2"
   },
   "dependencies": {
-    "gsap": "^1.16.1"
+    "gsap": "^1.16.1",
+    "nanoscroller": "^0.8.7",
+    "swiper": "^3.0.7"
   }
 }
