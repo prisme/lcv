@@ -1,3 +1,5 @@
+<?php require_once("cockpit/bootstrap.php"); ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,7 +45,6 @@
 	</script>
 </head>
 <body>
-	<?php //require_once("path/to/cockpit/bootstrap.php"); ?>
 
 	<h1>hello, world !</h1>
 
