@@ -1,5 +1,4 @@
 // source: https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
-
 var browserify = require('browserify');
 var gulp = require('gulp');
 var watchify = require('watchify');
@@ -10,6 +9,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var assign = require('lodash.assign');
 var livereload = require('gulp-livereload');
 var hbsify = require('hbsify');
+
 
 // custom browserify options
 var customOpts = {
@@ -53,4 +53,19 @@ function bundle() {
     .pipe(livereload({start: true}));
 }
 
-gulp.task('default', ['js']);
+var cssnext = require('gulp-cssnext')
+var rename = require('gulp-rename')
+
+
+gulp.task('css', function() {
+	gulp.watch('./assets/css/*.css', function() {
+	  gulp.src("./assets/css/*.css")
+	    .pipe(cssnext({
+	        compress: true
+	    }))
+	    .pipe(rename('style.min.css'))
+	    .pipe(gulp.dest('./assets/css'))
+	});
+});
+
+gulp.task('default', ['js', 'css']);
