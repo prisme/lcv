@@ -12,6 +12,19 @@
     "url": "https://github.com/prisme/lcv/issues"
   },
   "devDependencies": {
-    "browserify": "^10.2.1"
+    "autoprefixer": "^5.1.1",
+    "browserify": "^10.2.1",
+    "gulp": "^3.8.11",
+    "gulp-livereload": "^3.8.0",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-util": "^3.0.4",
+    "hbsify": "^1.0.1",
+    "lodash.assign": "^3.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.1.2"
+  },
+  "dependencies": {
+    "gsap": "^1.16.1"
   }
 }
