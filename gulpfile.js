@@ -10,8 +10,7 @@ var assign = require('lodash.assign');
 var livereload = require('gulp-livereload');
 var hbsify = require('hbsify');
 
-
-// custom browserify options
+// browserify options
 var customOpts = {
     entries: ['./assets/js/app.js'],
     debug: true,
@@ -39,24 +38,18 @@ w.on('log', gutil.log); // output build logs to terminal
 function bundle() {
     return b.bundle()
 
-    // log errors
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('bundle.js'))
-
-    // optional, remove if you don't need to buffer file contents
     .pipe(buffer())
-
-    // optional, remove if you dont want sourcemaps
-    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-    .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.write('.', {sourceRoot: '/assets/js'})) 
     .pipe(gulp.dest('./assets/js'))
     .pipe(livereload({start: true}));
 }
 
+
 var cssnext = require('gulp-cssnext')
 var rename = require('gulp-rename')
-
-
 gulp.task('css', function() {
 	gulp.watch('./assets/css/*.css', function() {
 	  gulp.src("./assets/css/*.css")
@@ -67,5 +60,6 @@ gulp.task('css', function() {
 	    .pipe(gulp.dest('./assets/css'))
 	});
 });
+
 
 gulp.task('default', ['js', 'css']);
