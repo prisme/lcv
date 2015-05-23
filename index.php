@@ -1,4 +1,7 @@
-<?php require_once("cockpit/bootstrap.php"); ?>
+<?php 
+	require_once("cockpit/bootstrap.php"); 
+	$api_token = '59770a79e2c9238617d3ff8f';
+?>
 
 <!DOCTYPE html>
 <html>
@@ -32,6 +35,7 @@
 	<link href="assets/css/style.css" rel="stylesheet" media="screen" />
 
 	<script src="assets/js/lib/detection.js"></script>
+	<?php cockpit_js_lib($api_token) ?>
 
 	<script>
 	  // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -46,7 +50,6 @@
 </head>
 <body>
 
-	<h1>hello, world !</h1>
 
 	<script src="assets/js/bundle.js"></script>
 </body>

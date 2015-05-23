@@ -1,0 +1,5 @@
+<div class="home">
+	{{# items }}
+	<h1>{{titre}}</h1>
+	{{/ items }}
+</div>

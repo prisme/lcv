@@ -9,12 +9,15 @@ var sourcemaps = require('gulp-sourcemaps')
 var assign = require('lodash.assign')
 var livereload = require('gulp-livereload')
 var hbsify = require('hbsify')
+var stringify = require('stringify')    
 
 // browserify options
 var customOpts = {
     entries: ['./assets/js/app.js'],
     debug: true,
-    transform: ['hbsify'],
+    transform: [
+      stringify({ extensions: ['.mst','.mustache'], minify: true })
+    ],
 
     // require(/path/to/file.js) directly from those paths
     paths: [
