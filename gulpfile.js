@@ -52,7 +52,7 @@ var cssnext = require('gulp-cssnext')
 var rename = require('gulp-rename')
 gulp.task('css', function() {
 	gulp.watch('./assets/css/*.css', function() {
-	  gulp.src("./assets/css/*.css")
+	  gulp.src("./assets/css/style.css")
 	    .pipe(cssnext({
 	        compress: true
 	    }))
