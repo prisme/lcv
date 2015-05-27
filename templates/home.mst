@@ -1,5 +1,13 @@
 <div class="home">
-	{{# items }}
-	<h1>{{titre}}</h1>
-	{{/ items }}
+	<div class="swiper-container">
+		<div class="swiper-wrapper">
+			{{# items }}
+			<div class="swiper-slide">
+				<h1>{{titre}}</h1>
+				<img src="{{visuel}}">
+				<p>{{{description}}}</p>
+			</div>
+			{{/ items }}
+		</div>
+	</div>
 </div>
