@@ -1,3 +1,5 @@
+@import url("//hello.myfonts.net/count/2e4864");
+
 /* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
 
@@ -10,6 +12,8 @@ strong {	font-weight: bold }
 body,html {
 	margin: 0;
 	padding: 0;
+	touch-action: manipulation;
+	user-select: none; 
 	font-size: 100%;
 	-ms-text-size-adjust: 100%;
 	-webkit-text-size-adjust: none;
@@ -18,10 +22,151 @@ body,html {
 	font-smoothing: subpixel-antialiased;
 	-webkit-tap-highlight-color: 0;
 	-webkit-tap-highlight-color: transparent;
-	touch-action: manipulation;
-	user-select: none; 
+}
+
+body{
+	font-family: Arial;
+	font-size: 16px;
 }
 
 
-/* Swiper 3.0.7 */
+/* typography */
+@font-face {
+	font-family: 'PlutoCondBold';
+	src: url('../fonts/2E4864_0_0.eot');
+	src: url('../fonts/2E4864_0_0.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/2E4864_0_0.woff2') format('woff2'),
+		 url('../fonts/2E4864_0_0.woff') format('woff'),
+		 url('../fonts/2E4864_0_0.ttf') format('truetype');
+}
+ 
+  
+@font-face {
+	font-family: 'PlutoCondLight';
+	src: url('../fonts/2E4864_1_0.eot');
+	src: url('../fonts/2E4864_1_0.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/2E4864_1_0.woff2') format('woff2'),
+		 url('../fonts/2E4864_1_0.woff') format('woff'),
+		 url('../fonts/2E4864_1_0.ttf') format('truetype');
+}
+
+.pluto-bold{ font-family: 'PlutoCondBold' }
+.pluto-light{ font-family: 'PlutoCondLight' }
+
+
+/* vars */
+:root {
+	--redColor: #e34f42;
+}
+
+
+/* vendor */
 @import 'swiper.min.css';
+
+/* common */
+.menu-prompt{
+	position: absolute;
+	z-index: 1;
+	top: 50px;
+	left: 100px;
+}
+
+.logo{
+	position: absolute;
+	z-index: 1;
+	right: 100px;
+	top: 50px;
+}
+
+.table{
+	display: table
+}
+
+.cell{
+	display: table-cell;
+  	vertical-align: middle;
+}
+
+/* home */
+.section{
+	z-index: 0;
+}
+.home .swiper-slide{
+	background-size: cover;
+	height: 100vh;
+}
+
+
+.home .swiper-container .txtblock{
+	position: relative; 
+	width: 100%;
+	padding: 0 100px;
+
+
+	margin-left: -5px;
+	line-height: 1.1;
+	color: white;
+}
+
+.home .swiper-container .moment{
+	font-size: 23px;
+	letter-spacing: 0.1em;
+}
+
+.home .swiper-container .moment,
+.home .swiper-container .title{
+	text-transform: uppercase;
+}
+
+.home .swiper-container .description,
+.home .swiper-container .moment{
+	padding-left: 5px;
+}
+
+.home .swiper-container .description{
+	font-size: 16px;
+}
+.home .swiper-container .description strong{
+	font-family: 'PlutoCondBold';
+}
+
+.home .swiper-container .title{
+	/*position: absolute;*/
+	font-size: 72px;
+	line-height: .9;
+	margin: .1em 0;
+	color: var(--redColor);
+}
+
+.home .swiper-container-horizontal>.swiper-pagination{
+	width: auto;
+	right: 100px;
+	bottom: initial;
+	left: initial;
+	top: 50%;
+	transform: translate3D(0,-50%,0);
+}
+
+.home .swiper-pagination-bullet.swiper-pagination-bullet-active { 
+	opacity: 1;
+}
+.home .swiper-pagination-bullet { 
+	color: white;
+	width: auto;
+	height: auto;
+	display: block;
+	border-radius: initial;
+	background: transparent;
+	opacity: .5;
+	padding: 0.5em 0;
+
+}
+.home .swiper-pagination-bullet:after{
+	content: ".";
+	display: inline-block;
+}
+
+.home .swiper-pagination-bullet-active{
+
+}
+

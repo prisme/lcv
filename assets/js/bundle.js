@@ -232,7 +232,7 @@ function loadData(){
   Cockpit.request('/collections/get/spectacles').success(function(items){
     data = items;
 
-    /* media 'manager' crap */
+    /* media manager */
     var imgs = items.map(function(item){ return item.visuel })
     Cockpit
     .request('/mediamanager/thumbnails', {
@@ -250,8 +250,6 @@ function loadData(){
       // if state changed while loading cancel
       if (state !== 'loading') return;
       compileTemplate(data);
-
-
     });
   });
 }
@@ -274,11 +272,17 @@ function ready() {
 console.log(swiper)
 
   var mySwiper = new swiper('.swiper-container', {
-      speed: 400,
-      spaceBetween: 100
-  });
-  console.log(mySwiper)
-  
+    speed: 400,
+    effect : 'fade',
+    fade: {
+      crossFade: true
+    },
+    paginationBulletRender: function (index, className) {
+      return '<span class="' + className + '">' + '0'+(index + 1) + '</span>';
+    },
+    pagination : '.swiper-pagination',
+    paginationClickable : true
+  });  
 
   animateIn();
   
@@ -11932,7 +11936,7 @@ else if (typeof define === 'function' && define.amd) {
     });
 }
 },{}],9:[function(require,module,exports){
-module.exports = "<div class=\"home\">\n\t<div class=\"swiper-container\">\n\t\t<div class=\"swiper-wrapper\">\n\t\t\t{{# items }}\n\t\t\t<div class=\"swiper-slide\">\n\t\t\t\t<h1>{{titre}}</h1>\n\t\t\t\t<img src=\"{{visuel}}\">\n\t\t\t\t<p>{{{description}}}</p>\n\t\t\t</div>\n\t\t\t{{/ items }}\n\t\t</div>\n\t</div>\n</div>";
+module.exports = "<div class=\"section home\">\n\t<div class=\"swiper-container\">\n\t\t<div class=\"swiper-wrapper\">\n\t\t\t{{# items }}\n\t\t\t<div class=\"swiper-slide table\" style=\"background-image: url({{visuel}});\">\n\t\t\t\t<div class=\"cell\">\n\t\t\t\t\t<div class=\"txtblock\">\n\t\t\t\t\t\t<div class=\"moment pluto-bold\">prochainement</div> {{! à dynamiser }}\n\t\t\t\t\t\t<h1 class=\"title pluto-bold\">{{titre}}</h1>\n\t\t\t\t\t\t<div class=\"description\">{{{description}}}</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<!--  <img src=\"{{visuel}}\"> -->\n\t\t\t</div>\n\t\t\t{{/ items }}\n\t\t</div>\n\t\t<div class=\"swiper-pagination\"></div>\n\t</div>\n</div>\n";
 
 },{}]},{},[1])
 

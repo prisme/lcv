@@ -32,7 +32,7 @@ function loadData(){
   Cockpit.request('/collections/get/spectacles').success(function(items){
     data = items;
 
-    /* media 'manager' crap */
+    /* media manager */
     var imgs = items.map(function(item){ return item.visuel })
     Cockpit
     .request('/mediamanager/thumbnails', {
@@ -50,8 +50,6 @@ function loadData(){
       // if state changed while loading cancel
       if (state !== 'loading') return;
       compileTemplate(data);
-
-
     });
   });
 }
@@ -74,11 +72,17 @@ function ready() {
 console.log(swiper)
 
   var mySwiper = new swiper('.swiper-container', {
-      speed: 400,
-      spaceBetween: 100
-  });
-  console.log(mySwiper)
-  
+    speed: 400,
+    effect : 'fade',
+    fade: {
+      crossFade: true
+    },
+    paginationBulletRender: function (index, className) {
+      return '<span class="' + className + '">' + '0'+(index + 1) + '</span>';
+    },
+    pagination : '.swiper-pagination',
+    paginationClickable : true
+  });  
 
   animateIn();
   
