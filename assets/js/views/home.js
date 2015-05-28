@@ -81,7 +81,8 @@ console.log(swiper)
       return '<span class="' + className + '">' + '0'+(index + 1) + '</span>';
     },
     pagination : '.swiper-pagination',
-    paginationClickable : true
+    paginationClickable : true,
+    keyboardControl: true
   });  
 
   animateIn();
