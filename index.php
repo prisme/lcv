@@ -32,7 +32,7 @@
 
 	<link rel="icon" href="assets/img/favicon.ico" />
 
-	<link href="assets/css/style.css" rel="stylesheet" media="screen" />
+	<link href="assets/css/style.min.css" rel="stylesheet" media="screen" />
 
 	<script src="assets/js/lib/detection.js"></script>
 	<?php cockpit_js_lib($api_token) ?>
