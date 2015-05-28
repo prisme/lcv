@@ -53,16 +53,17 @@ function bundle() {
 
 var cssnext = require('gulp-cssnext')
 var rename = require('gulp-rename')
+
 gulp.task('css', function() {
-	gulp.watch('./assets/css/*.css', function() {
-	  gulp.src("./assets/css/style.css")
-	    .pipe(cssnext({
-	        compress: true
-	    }))
-	    .pipe(rename('style.min.css'))
-	    .pipe(gulp.dest('./assets/css'))
-	})
+  gulp.src('./assets/css/style.css')
+    .pipe(cssnext({
+        compress: true
+    }))
+    .pipe(rename('style.min.css'))
+    .pipe(gulp.dest('./assets/css'))
 })
 
 
-gulp.task('default', ['js', 'css'])
+gulp.task('default', ['js', 'css'], function(){
+  gulp.watch('./assets/css/style.css', ['css'])
+})
