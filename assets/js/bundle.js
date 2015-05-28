@@ -269,10 +269,9 @@ function ready() {
 
   // Select elements
   document.body.appendChild(_content);
-console.log(swiper)
 
-  var mySwiper = new swiper('.swiper-container', {
-    speed: 400,
+  new swiper('.swiper-container', {
+    speed: 1000,
     effect : 'fade',
     fade: {
       crossFade: true
