@@ -71,7 +71,8 @@ function ready() {
   document.body.appendChild(_content);
 
   new swiper('.swiper-container', {
-    speed: 1000,
+    speed: 1200,
+    autoplay: 5000,
     effect : 'fade',
     fade: {
       crossFade: true
