@@ -73,15 +73,15 @@ function ready() {
   new swiper('.swiper-container', {
     speed: 1200,
     autoplay: 5000,
-    effect : 'fade',
+    effect: 'fade',
     fade: {
       crossFade: true
     },
     paginationBulletRender: function (index, className) {
       return '<span class="' + className + '">' + '0'+(index + 1) + '</span>';
     },
-    pagination : '.swiper-pagination',
-    paginationClickable : true,
+    pagination: '.swiper-pagination',
+    paginationClickable: true,
     keyboardControl: true
   });  
 
