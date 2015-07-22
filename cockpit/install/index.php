@@ -33,10 +33,10 @@ $app = cockpit();
 
 // check whether cockpit is already installed
 try {
-    if ($app->db->getCollection("cockpit/accounts")->count()) {
-        header('Location: '.$app->baseUrl('/'));
-        exit;
-    }
+    // if ($app->db->getCollection("cockpit/accounts")->count()) {
+    //     header('Location: '.$app->baseUrl('/'));
+    //     exit;
+    // }
 } catch(Exception $e) { }
 
 $account = [
@@ -49,6 +49,6 @@ $account = [
     "i18n"     => "en"
 ];
 
-$app->db->insert("cockpit/accounts", $account);
+// $app->db->insert("cockpit/accounts", $account);
 
 include(__DIR__."/success.php");

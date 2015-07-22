@@ -59,7 +59,12 @@
 		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" baseProfile="tiny" x="0px" y="0px" width="31px" height="15px" viewBox="0 0 30 15" xml:space="preserve">
 		<g><path fill-rule="evenodd" fill="#FFFFFF" d="M0 0h31v1H0V0z"/><path fill-rule="evenodd" fill="#FFFFFF" d="M0 7h31v1H0V7z"/><path fill-rule="evenodd" fill="#FFFFFF" d="M0 14h31v1H0V14z"/></g></svg>
 	</div>
+
 	<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
+
+	<footer>
+		<?php region('footer') ?>
+	</footer>
 
 	<script src="assets/js/bundle.js"></script>
 </body>

@@ -30,7 +30,7 @@ function loadData(){
   state = 'loading';
 
   Cockpit.request('/collections/get/spectacles').success(function(items){
-    data = items;
+    data = items.slice(0,3); 
 
     /* media manager */
     var imgs = items.map(function(item){ return item.visuel })
