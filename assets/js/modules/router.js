@@ -2,12 +2,12 @@ var page = require('page');
 
 // Import all views
 var home = require('home');
-var item = require('instance'); 
-var other = require('instance');
+var list = require('list'); 
+var item = require('item');
 
 var instances = {
+    list: list,
     item: item,
-    other: other,
 };
 
 exports.page = page;
@@ -25,17 +25,19 @@ exports.init = function(ROOT) {
     page.exit('/:list/:item', exitInstance);
 
     function enterInstance(ctx, next) { 
-        console.log('enterInstance', ctx)
         
-        var instance = false;
+        var instance;
 
-        switch(ctx.params.list) {
-            case 'ateliers' :
-                instance = item;
+        // @todo : switch should be replaced by if indexOf in routes array…
+        switch(ctx.params.list){ 
+            case 'ateliers' : case 'spectacles' : 
+                if( typeof ctx.params.item !== 'undefined')
+                    instance = item
+                else
+                    instance = list;
                 break;
-            case 'spectacles' :
-                instance = other;
-                break;
+            default :
+                instance = false
         }
 
         // If url not in list, redirect towards home (404)
@@ -50,7 +52,6 @@ exports.init = function(ROOT) {
     }
 
     function exitInstance(ctx, next) {
-        console.log('exitInstance', ctx)
 
         // instance won't exist for 404 pages, so skip to enter
         if (!ctx.instance) {

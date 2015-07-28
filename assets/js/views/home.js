@@ -6,7 +6,7 @@ var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
 var swiper = require('swiper')
 
-var template = require('home.mst');
+var template = require('home.hbs');
 
 // Current state of module
 // Can also be 'loading', 'ready', 'on' and 'leaving'
@@ -73,7 +73,7 @@ function compileTemplate(ctx) {
     data = data || ctx.state.static // !!!
 
     // var html = template({items: data});
-    var html = mustache.render(template, {items : data}) 
+    var html = template({items : data});
     content = parseHTML(html);
     ready(ctx);
 }

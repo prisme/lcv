@@ -3,18 +3,16 @@
 module.exports = instance;
 
 var page = require('page');
-var xhr = require('xhr');
 var gsap = require('gsap');
 var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
-var preload = require('preload');
 
-var template = require('test.hbs');
+var template = require('item.hbs');
 
 function instance() {
     var _this = this;
 
-    var dataUrl = 'assets/data/test.json';
+    // var dataUrl = 'assets/data/test.json';
 
     // Current state of module
     // Can also be 'loading', 'ready', 'on' and 'leaving'
@@ -35,35 +33,34 @@ function instance() {
     // 2. Load data
     function loadData(ctx){
         state = 'loading';
-        if (data || ctx.state.item){
+
+        if (data || ctx.state.instance){
             compileTemplate(ctx); 
             return;
         }
-        xhr({url: dataUrl, json: true}, function (err, resp, body) {
-            data = body;
-
-            // Check if item exists in data, if not, redirect to index
-            if (!data[ctx.params.item]) {
-
-                // Remove instance so that exit isn't called
-                delete ctx.instance;
-                page('/');
-                return;
-            }
+        
+        Cockpit
+        .request('/collections/get/'+ctx.params.list, { filter: {_id: ctx.params.item}})
+        .success(function(items){
+            console.log(items)
+            data = items;
 
             // Cache data
-            ctx.state.item = data;
+            ctx.state.instance = data;
             ctx.save();
 
             // if state changed while loading cancel
             if (state !== 'loading') return;
             compileTemplate(ctx);
         });
+        
     }
 
     // 3. Compile a DOM element from the template and data
     function compileTemplate(ctx) {
-        var html = template(data);
+        data = data || ctx.state.instance // !!!
+
+        var html = template({item: data});
         content = parseHTML(html);
         ready(ctx);
     }
@@ -71,6 +68,7 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
+        console.log('ready', ctx)
 
         document.body.appendChild(content);
 
@@ -160,4 +158,3 @@ function instance() {
     }
 
 }
-

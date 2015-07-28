@@ -1,5 +1,19 @@
-<div class="home">
-	{{#items }}
-		<p><a href="{{collection}}/{{_id}}">{{title}}</a></p>
-	{{/items}}
+<div class="section home">
+	<div class="swiper-container">
+		<div class="swiper-wrapper">
+			{{# items }}
+			<div class="swiper-slide table" style="background-image: url({{visuel}});">
+				<div class="cell">
+					<div class="txtblock">
+						<div class="moment pluto-bold">prochainement</div> {{! à dynamiser }}
+						<h1 class="title pluto-bold">{{titre}}</h1>
+						<div class="description">{{{description}}}</div>
+					</div>
+				</div>
+				<!--  <img src="{{visuel}}"> -->
+			</div>
+			{{/ items }}
+		</div>
+		<div class="swiper-pagination"></div>
+	</div>
 </div>

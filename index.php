@@ -63,8 +63,10 @@
 	<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
 
 	<div class="menu">
-		<a href="/sandbox/lcv/spectacles/01">spectacles</a>
+		<a href="/sandbox/lcv/spectacles/">spectacles</a>
+		<a href="/sandbox/lcv/spectacles/01">spectacles/01</a>
 		<a href="/sandbox/lcv/ateliers/">ateliers</a>
+		<a href="/sandbox/lcv/404/">404</a> 
 	</div>
 
 	<footer>

@@ -22,7 +22,7 @@ pubsub.on('global-resize', resize)
 
 
 
-},{"gsap":31,"pubsub":4}],3:[function(require,module,exports){
+},{"gsap":32,"pubsub":4}],3:[function(require,module,exports){
 /*
  *
  * Turns an HTML string into a DOM element (only first element returned)
@@ -200,12 +200,12 @@ var page = require('page');
 
 // Import all views
 var home = require('home');
-var item = require('instance'); 
-var other = require('instance');
+var list = require('list'); 
+var item = require('item');
 
 var instances = {
+    list: list,
     item: item,
-    other: other,
 };
 
 exports.page = page;
@@ -223,17 +223,19 @@ exports.init = function(ROOT) {
     page.exit('/:list/:item', exitInstance);
 
     function enterInstance(ctx, next) { 
-        console.log('enterInstance', ctx)
         
-        var instance = false;
+        var instance;
 
-        switch(ctx.params.list) {
-            case 'ateliers' :
-                instance = item;
+        // @todo : switch should be replaced by if indexOf in routes array…
+        switch(ctx.params.list){ 
+            case 'ateliers' : case 'spectacles' : 
+                if( typeof ctx.params.item !== 'undefined')
+                    instance = item
+                else
+                    instance = list;
                 break;
-            case 'spectacles' :
-                instance = other;
-                break;
+            default :
+                instance = false
         }
 
         // If url not in list, redirect towards home (404)
@@ -248,7 +250,6 @@ exports.init = function(ROOT) {
     }
 
     function exitInstance(ctx, next) {
-        console.log('exitInstance', ctx)
 
         // instance won't exist for 404 pages, so skip to enter
         if (!ctx.instance) {
@@ -262,7 +263,7 @@ exports.init = function(ROOT) {
     page.base(ROOT);
     page.start();
 };
-},{"home":6,"instance":7,"page":51}],6:[function(require,module,exports){
+},{"home":6,"item":7,"list":8,"page":52}],6:[function(require,module,exports){
 // Use static template for 'one of a kind' pages like home
 // Is never destroyed
 var mustache = require('mustache')
@@ -271,7 +272,7 @@ var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
 var swiper = require('swiper')
 
-var template = require('home.mst');
+var template = require('home.hbs');
 
 // Current state of module
 // Can also be 'loading', 'ready', 'on' and 'leaving'
@@ -338,7 +339,7 @@ function compileTemplate(ctx) {
     data = data || ctx.state.static // !!!
 
     // var html = template({items: data});
-    var html = mustache.render(template, {items : data}) 
+    var html = template({items : data});
     content = parseHTML(html);
     ready(ctx);
 }
@@ -428,7 +429,7 @@ function resize(_width, _height) {
 
 
 
-},{"gsap":31,"home.mst":55,"mustache":50,"parseHTML":3,"pubsub":4,"swiper":54}],7:[function(require,module,exports){
+},{"gsap":32,"home.hbs":56,"mustache":51,"parseHTML":3,"pubsub":4,"swiper":55}],7:[function(require,module,exports){
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
 module.exports = instance;
@@ -590,11 +591,171 @@ function instance() {
 
 }
 
-},{"gsap":31,"item.hbs":56,"page":51,"parseHTML":3,"pubsub":4}],8:[function(require,module,exports){
+},{"gsap":32,"item.hbs":57,"page":52,"parseHTML":3,"pubsub":4}],8:[function(require,module,exports){
+// Use instance template for 'many of a kind' such as list items
+// Will be instantiated and destroyed after use
+module.exports = instance;
 
-},{}],9:[function(require,module,exports){
-arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}],10:[function(require,module,exports){
+var page = require('page');
+var gsap = require('gsap');
+var parseHTML = require('parseHTML');
+var pubsub = require('pubsub');
+
+var template = require('list.hbs');
+
+function instance() {
+    var _this = this;
+
+    // Current state of module
+    // Can also be 'loading', 'ready', 'on' and 'leaving'
+    // 'off' = the module is inactive
+    // 'loading' = the data is loading, nothing is shown
+    // 'ready' = the content is ready, but still animating or preloading files
+    // 'on' = all animated and preloaded
+    // 'leaving' = exit has been called, animating out
+    var state = 'off';
+
+    var data, content;
+
+    // 1. triggered from router.js
+    _this.enter = function (ctx){
+        loadData(ctx);
+    };
+
+    // 2. Load data
+    function loadData(ctx){
+        state = 'loading';
+
+        if (data || ctx.state.instance){
+            compileTemplate(ctx); 
+            return;
+        }
+        
+        Cockpit
+        .request('/collections/get/'+ctx.params.list)
+        .success(function(items){
+            console.log(items)
+            data = items;
+
+            // Cache data
+            ctx.state.instance = data;
+            ctx.save();
+
+            // if state changed while loading cancel
+            if (state !== 'loading') return;
+            compileTemplate(ctx);
+        });
+        
+    }
+
+    // 3. Compile a DOM element from the template and data
+    function compileTemplate(ctx) {
+        data = data || ctx.state.instance
+
+        var html = template({ items: data })
+        content = parseHTML(html);
+        ready(ctx);
+    }
+
+    // 4. Content is ready to be shown
+    function ready(ctx) {
+        state = 'ready';
+        console.log('ready', ctx)
+
+        document.body.appendChild(content);
+
+        // preload({
+        //     id: 'home',
+        //     images: {
+        //         test: 'assets/img/test.jpg',
+        //     },
+        //     shaders: {
+        //         baseVert: 'assets/shaders/base_vert.glsl',
+        //     },
+        //     streams: {
+        //         buzz: 'assets/audio/buzz.mp3',
+        //     },
+        //     buffers: {
+        //         buzz: 'assets/audio/buzz.mp3',
+        //     },
+        // });
+
+        // pubsub.on('preload-home', function(_assets) {
+        //     console.log(_assets);
+        // });
+
+        animateIn();
+        
+        // For resize:
+        //     either force a global resize from common.js
+        // pubsub.emit('global-resize');
+
+        //     or just keep it local
+        // resize(window.innerWidth, window.innerHeight);
+    }
+
+    // 5. Final step, animate in page
+    function animateIn() {
+        TweenLite.to(content, 0.5, {
+            autoAlpha: 1, 
+            onComplete: function() {
+
+                // End of animation
+                state = 'on';
+            }
+        });
+    }
+
+    // Triggered from router.js
+    _this.exit = function (ctx, next){
+
+        // If user requests to leave before content loaded
+        if (state == 'off' || state == 'loading') {
+            console.log('left before loaded');
+            next();
+            return;
+        }
+        if (state == 'ready') console.log('still animating on quit');
+
+        state = 'leaving';
+
+        // Remove instance of self from ctx
+        delete ctx.instance;
+        
+        animateOut(next);
+
+        // Let next view start loading
+        // next();
+    };
+
+    function animateOut(next) {
+        TweenLite.to(content, 0.5, {
+            autoAlpha: 0, 
+            onComplete: function() {
+                content.parentNode.removeChild(content);
+
+                // End of animation
+                state = 'off';
+
+                // Let next view start loading
+                next();
+            }
+        });
+    }
+
+    // Listen to global resizes
+    pubsub.on('resize', resize);
+    function resize(_width, _height) { 
+        
+    }
+
+}
+
+},{"gsap":32,"list.hbs":58,"page":52,"parseHTML":3,"pubsub":4}],9:[function(require,module,exports){
+
+},{}],10:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"dup":9}],11:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -2010,7 +2171,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":11,"ieee754":12,"is-array":13}],11:[function(require,module,exports){
+},{"base64-js":12,"ieee754":13,"is-array":14}],12:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -2136,7 +2297,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -2222,7 +2383,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 /**
  * isArray
@@ -2257,7 +2418,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2560,7 +2721,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2585,12 +2746,12 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2682,10 +2843,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":19}],19:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":20}],20:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2779,7 +2940,7 @@ function forEach (xs, f) {
 
 }).call(this,require('_process'))
 
-},{"./_stream_readable":21,"./_stream_writable":23,"_process":17,"core-util-is":24,"inherits":15}],20:[function(require,module,exports){
+},{"./_stream_readable":22,"./_stream_writable":24,"_process":18,"core-util-is":25,"inherits":16}],21:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2827,7 +2988,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":22,"core-util-is":24,"inherits":15}],21:[function(require,module,exports){
+},{"./_stream_transform":23,"core-util-is":25,"inherits":16}],22:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3783,7 +3944,7 @@ function indexOf (xs, x) {
 
 }).call(this,require('_process'))
 
-},{"./_stream_duplex":19,"_process":17,"buffer":10,"core-util-is":24,"events":14,"inherits":15,"isarray":16,"stream":29,"string_decoder/":30,"util":9}],22:[function(require,module,exports){
+},{"./_stream_duplex":20,"_process":18,"buffer":11,"core-util-is":25,"events":15,"inherits":16,"isarray":17,"stream":30,"string_decoder/":31,"util":10}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3994,7 +4155,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":19,"core-util-is":24,"inherits":15}],23:[function(require,module,exports){
+},{"./_stream_duplex":20,"core-util-is":25,"inherits":16}],24:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4476,7 +4637,7 @@ function endWritable(stream, state, cb) {
 
 }).call(this,require('_process'))
 
-},{"./_stream_duplex":19,"_process":17,"buffer":10,"core-util-is":24,"inherits":15,"stream":29}],24:[function(require,module,exports){
+},{"./_stream_duplex":20,"_process":18,"buffer":11,"core-util-is":25,"inherits":16,"stream":30}],25:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4587,10 +4748,10 @@ function objectToString(o) {
 }
 }).call(this,require("buffer").Buffer)
 
-},{"buffer":10}],25:[function(require,module,exports){
+},{"buffer":11}],26:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":20}],26:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":21}],27:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = require('stream');
 exports.Readable = exports;
@@ -4599,13 +4760,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":19,"./lib/_stream_passthrough.js":20,"./lib/_stream_readable.js":21,"./lib/_stream_transform.js":22,"./lib/_stream_writable.js":23,"stream":29}],27:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":20,"./lib/_stream_passthrough.js":21,"./lib/_stream_readable.js":22,"./lib/_stream_transform.js":23,"./lib/_stream_writable.js":24,"stream":30}],28:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":22}],28:[function(require,module,exports){
+},{"./lib/_stream_transform.js":23}],29:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":23}],29:[function(require,module,exports){
+},{"./lib/_stream_writable.js":24}],30:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4734,7 +4895,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":14,"inherits":15,"readable-stream/duplex.js":18,"readable-stream/passthrough.js":25,"readable-stream/readable.js":26,"readable-stream/transform.js":27,"readable-stream/writable.js":28}],30:[function(require,module,exports){
+},{"events":15,"inherits":16,"readable-stream/duplex.js":19,"readable-stream/passthrough.js":26,"readable-stream/readable.js":27,"readable-stream/transform.js":28,"readable-stream/writable.js":29}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4957,7 +5118,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":10}],31:[function(require,module,exports){
+},{"buffer":11}],32:[function(require,module,exports){
 (function (global){
 /*!
  * VERSION: 1.16.1
@@ -12182,7 +12343,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 })((typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window, "TweenMax");
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var Handlebars = require('handlebars');
 var through = require('through');
 
@@ -12210,7 +12371,7 @@ var hbsify = function(file) {
 module.exports = hbsify;
 module.exports.runtime = require('handlebars/runtime')["default"];
 
-},{"handlebars":47,"handlebars/runtime":48,"through":49}],33:[function(require,module,exports){
+},{"handlebars":48,"handlebars/runtime":49,"through":50}],34:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -12248,7 +12409,7 @@ Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":34,"./handlebars/compiler/ast":36,"./handlebars/compiler/base":37,"./handlebars/compiler/compiler":38,"./handlebars/compiler/javascript-compiler":39}],34:[function(require,module,exports){
+},{"./handlebars.runtime":35,"./handlebars/compiler/ast":37,"./handlebars/compiler/base":38,"./handlebars/compiler/compiler":39,"./handlebars/compiler/javascript-compiler":40}],35:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -12281,7 +12442,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":35,"./handlebars/exception":43,"./handlebars/runtime":44,"./handlebars/safe-string":45,"./handlebars/utils":46}],35:[function(require,module,exports){
+},{"./handlebars/base":36,"./handlebars/exception":44,"./handlebars/runtime":45,"./handlebars/safe-string":46,"./handlebars/utils":47}],36:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -12462,7 +12623,7 @@ exports.log = log;var createFrame = function(object) {
   return obj;
 };
 exports.createFrame = createFrame;
-},{"./exception":43,"./utils":46}],36:[function(require,module,exports){
+},{"./exception":44,"./utils":47}],37:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -12690,7 +12851,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":43}],37:[function(require,module,exports){
+},{"../exception":44}],38:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -12706,7 +12867,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"./ast":36,"./parser":40}],38:[function(require,module,exports){
+},{"./ast":37,"./parser":41}],39:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -13176,7 +13337,7 @@ exports.precompile = precompile;function compile(input, options, env) {
 }
 
 exports.compile = compile;
-},{"../exception":43}],39:[function(require,module,exports){
+},{"../exception":44}],40:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -14119,7 +14280,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":35,"../exception":43}],40:[function(require,module,exports){
+},{"../base":36,"../exception":44}],41:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* Jison generated parser */
@@ -14610,7 +14771,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -14749,7 +14910,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":42}],42:[function(require,module,exports){
+},{"./visitor":43}],43:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -14762,7 +14923,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -14791,7 +14952,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -14929,7 +15090,7 @@ exports.program = program;function invokePartial(partial, name, context, helpers
 exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;
-},{"./base":35,"./exception":43,"./utils":46}],45:[function(require,module,exports){
+},{"./base":36,"./exception":44,"./utils":47}],46:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -14941,7 +15102,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -15018,7 +15179,7 @@ exports.escapeExpression = escapeExpression;function isEmpty(value) {
 }
 
 exports.isEmpty = isEmpty;
-},{"./safe-string":45}],47:[function(require,module,exports){
+},{"./safe-string":46}],48:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -15045,12 +15206,12 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":33,"../dist/cjs/handlebars/compiler/printer":41,"../dist/cjs/handlebars/compiler/visitor":42,"fs":8}],48:[function(require,module,exports){
+},{"../dist/cjs/handlebars":34,"../dist/cjs/handlebars/compiler/printer":42,"../dist/cjs/handlebars/compiler/visitor":43,"fs":9}],49:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime');
 
-},{"./dist/cjs/handlebars.runtime":34}],49:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":35}],50:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -15163,7 +15324,7 @@ function through (write, end, opts) {
 
 }).call(this,require('_process'))
 
-},{"_process":17,"stream":29}],50:[function(require,module,exports){
+},{"_process":18,"stream":30}],51:[function(require,module,exports){
 /*!
  * mustache.js - Logic-less {{mustache}} templates with JavaScript
  * http://github.com/janl/mustache.js
@@ -15766,7 +15927,7 @@ function through (write, end, opts) {
 
 }));
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (process){
   /* globals require, module */
 
@@ -16390,7 +16551,7 @@ function through (write, end, opts) {
 
 }).call(this,require('_process'))
 
-},{"_process":17,"path-to-regexp":52}],52:[function(require,module,exports){
+},{"_process":18,"path-to-regexp":53}],53:[function(require,module,exports){
 var isArray = require('isarray');
 
 /**
@@ -16594,9 +16755,9 @@ function pathToRegexp (path, keys, options) {
   return attachKeys(new RegExp('^' + route, flags(options)), keys);
 }
 
-},{"isarray":53}],53:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"dup":16}],54:[function(require,module,exports){
+},{"isarray":54}],54:[function(require,module,exports){
+arguments[4][17][0].apply(exports,arguments)
+},{"dup":17}],55:[function(require,module,exports){
 /**
  * Swiper 3.0.7
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -20385,10 +20546,47 @@ else if (typeof define === 'function' && define.amd) {
         return window.Swiper;
     });
 }
-},{}],55:[function(require,module,exports){
-module.exports = "<div class=\"section home\">\n\t<a href=\"spectacles/\">spectacles</a>\n\t<div class=\"swiper-container\">\n\t\t<div class=\"swiper-wrapper\">\n\t\t\t{{# items }}\n\t\t\t<div class=\"swiper-slide table\" style=\"background-image: url({{visuel}});\">\n\t\t\t\t<div class=\"cell\">\n\t\t\t\t\t<div class=\"txtblock\">\n\t\t\t\t\t\t<div class=\"moment pluto-bold\">prochainement</div> {{! à dynamiser }}\n\t\t\t\t\t\t<h1 class=\"title pluto-bold\">{{titre}}</h1>\n\t\t\t\t\t\t<div class=\"description\">{{{description}}}</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<!--  <img src=\"{{visuel}}\"> -->\n\t\t\t</div>\n\t\t\t{{/ items }}\n\t\t</div>\n\t\t<div class=\"swiper-pagination\"></div>\n\t</div>\n</div>\n";
-
 },{}],56:[function(require,module,exports){
+var Handlebars = require("hbsify").runtime;
+module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n			<div class=\"swiper-slide table\" style=\"background-image: url(";
+  if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + ");\">\n				<div class=\"cell\">\n					<div class=\"txtblock\">\n						<div class=\"moment pluto-bold\">prochainement</div> \n						<h1 class=\"title pluto-bold\">";
+  if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.titre); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h1>\n						<div class=\"description\">";
+  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</div>\n					</div>\n				</div>\n				<!--  <img src=\"";
+  if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\"> -->\n			</div>\n			";
+  return buffer;
+  }
+
+  buffer += "<div class=\"section home\">\n	<div class=\"swiper-container\">\n		<div class=\"swiper-wrapper\">\n			";
+  options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
+  if (helper = helpers.items) { stack1 = helper.call(depth0, options); }
+  else { helper = (depth0 && depth0.items); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
+  if (!helpers.items) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		</div>\n		<div class=\"swiper-pagination\"></div>\n	</div>\n</div>";
+  return buffer;
+  });
+
+},{"hbsify":33}],57:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -20420,7 +20618,39 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":32}]},{},[1])
+},{"hbsify":33}],58:[function(require,module,exports){
+var Handlebars = require("hbsify").runtime;
+module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n		<p><a href=\"";
+  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.titre); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</a></p>\n	";
+  return buffer;
+  }
+
+  buffer += "<div class=\"home\">\n	<a class=\"back\" href=\"../\">back</a>	\n	";
+  options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
+  if (helper = helpers.items) { stack1 = helper.call(depth0, options); }
+  else { helper = (depth0 && depth0.items); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
+  if (!helpers.items) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>";
+  return buffer;
+  });
+
+},{"hbsify":33}]},{},[1])
 
 
 //# sourceMappingURL=bundle.js.map
