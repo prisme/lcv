@@ -40,6 +40,8 @@ function loadData(ctx){
     Cockpit.request('/collections/get/spectacles').success(function(items){
       data = items.slice(0,3); 
 
+      console.log(items)
+
       // Cache data
       ctx.state.static = data;
       ctx.save();

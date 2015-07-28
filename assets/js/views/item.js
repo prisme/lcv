@@ -40,7 +40,7 @@ function instance() {
         }
         
         Cockpit
-        .request('/collections/get/'+ctx.params.list, { filter: {_id: ctx.params.item}})
+        .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
         .success(function(items){
             console.log(items)
             data = items;
@@ -49,9 +49,30 @@ function instance() {
             ctx.state.instance = data;
             ctx.save();
 
+            /* media manager */
+            var imgs = items.map(function(item){ return item.visuel })
+            Cockpit
+            .request('/mediamanager/thumbnails', {
+              images: imgs,
+              w: 1920, h: 1080,
+              options: { quality : 80, mode : 'best_fit' }
+            })
+            .success(function(items){
+
+              // transmute object containing urls to array
+              items = Object.keys(items).map(function (key) {return items[key]});
+              // replace data.visuel props with actual urls
+              data.forEach(function(d,i){ d.visuel = items[i] })
+
+
+              // if state changed while loading cancel
+              if (state !== 'loading') return;
+              compileTemplate(data);
+            });
+
             // if state changed while loading cancel
-            if (state !== 'loading') return;
-            compileTemplate(ctx);
+            // if (state !== 'loading') return;
+            // compileTemplate(ctx);
         });
         
     }

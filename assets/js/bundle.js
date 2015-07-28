@@ -229,10 +229,14 @@ exports.init = function(ROOT) {
         // @todo : switch should be replaced by if indexOf in routes array…
         switch(ctx.params.list){ 
             case 'ateliers' : case 'spectacles' : 
-                if( typeof ctx.params.item !== 'undefined')
+                if( typeof ctx.params.item !== 'undefined'){
+                    console.log('item')
                     instance = item
-                else
+                }
+                else{
+                    console.log('list')
                     instance = list;
+                }
                 break;
             default :
                 instance = false
@@ -305,6 +309,8 @@ function loadData(ctx){
     
     Cockpit.request('/collections/get/spectacles').success(function(items){
       data = items.slice(0,3); 
+
+      console.log(items)
 
       // Cache data
       ctx.state.static = data;
@@ -472,7 +478,7 @@ function instance() {
         }
         
         Cockpit
-        .request('/collections/get/'+ctx.params.list, { filter: {_id: ctx.params.item}})
+        .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
         .success(function(items){
             console.log(items)
             data = items;
@@ -481,9 +487,30 @@ function instance() {
             ctx.state.instance = data;
             ctx.save();
 
+            /* media manager */
+            var imgs = items.map(function(item){ return item.visuel })
+            Cockpit
+            .request('/mediamanager/thumbnails', {
+              images: imgs,
+              w: 1920, h: 1080,
+              options: { quality : 80, mode : 'best_fit' }
+            })
+            .success(function(items){
+
+              // transmute object containing urls to array
+              items = Object.keys(items).map(function (key) {return items[key]});
+              // replace data.visuel props with actual urls
+              data.forEach(function(d,i){ d.visuel = items[i] })
+
+
+              // if state changed while loading cancel
+              if (state !== 'loading') return;
+              compileTemplate(data);
+            });
+
             // if state changed while loading cancel
-            if (state !== 'loading') return;
-            compileTemplate(ctx);
+            // if (state !== 'loading') return;
+            // compileTemplate(ctx);
         });
         
     }
@@ -20597,14 +20624,18 @@ function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n	    <h1>";
-  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.titre); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</h1>\n    	<p>";
   if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</p>\n    ";
+  buffer += "</p>\n    	<img src=\"";
+  if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n    ";
   return buffer;
   }
 
@@ -20629,8 +20660,8 @@ function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n		<p><a href=\"";
-  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.titre_slug) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.titre_slug); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\">";
   if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
