@@ -2,12 +2,12 @@ var page = require('page');
 
 // Import all views
 var home = require('home');
-var ateliers = require('list');
-var spectacles = require('list');
+var item = require('instance'); 
+var other = require('instance');
 
 var instances = {
-    ateliers: ateliers,
-    spectacles: spectacles,
+    item: item,
+    other: other,
 };
 
 exports.page = page;
@@ -18,23 +18,24 @@ exports.init = function(ROOT) {
     page('/', home.enter);
     page.exit('/', home.exit);
 
-    page('/:list', function(ctx, next){
-        console.log('enterInstance', ctx)
-    });
+    page('/:list', enterInstance);
     page.exit('/:list', exitInstance);
 
-    function enterInstance(ctx, next) {
+    page('/:list/:item', enterInstance);
+    page.exit('/:list/:item', exitInstance);
+
+    function enterInstance(ctx, next) { 
         console.log('enterInstance', ctx)
         
         var instance = false;
 
         switch(ctx.params.list) {
             case 'ateliers' :
-                instance = ateliers;
-                break;   
+                instance = item;
+                break;
             case 'spectacles' :
-                instance = spectacles;
-                break;   
+                instance = other;
+                break;
         }
 
         // If url not in list, redirect towards home (404)
@@ -49,7 +50,7 @@ exports.init = function(ROOT) {
     }
 
     function exitInstance(ctx, next) {
-        console.log(ctx)
+        console.log('exitInstance', ctx)
 
         // instance won't exist for 404 pages, so skip to enter
         if (!ctx.instance) {
@@ -61,5 +62,5 @@ exports.init = function(ROOT) {
 
     // Activate page
     page.base(ROOT);
-    page();
+    page.start();
 };

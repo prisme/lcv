@@ -1,7 +1,12 @@
+// Use static template for 'one of a kind' pages like home
+// Is never destroyed
 var mustache = require('mustache')
-var parseHTML = require('parseHTML')
-var pubsub = require('pubsub')
+var gsap = require('gsap');
+var parseHTML = require('parseHTML');
+var pubsub = require('pubsub');
 var swiper = require('swiper')
+
+var template = require('home.mst');
 
 // Current state of module
 // Can also be 'loading', 'ready', 'on' and 'leaving'
@@ -11,88 +16,103 @@ var swiper = require('swiper')
 // 'on' = all animated and preloaded
 // 'leaving' = exit has been called, animating out
 var state = 'off';
-exports.state = state;
 
-var tpl = require('home.mst')
-var data, _content
+var data, content;
 
-
-exports.enter = function() {
-  if (_content) {
-      ready();
-      return;
-  }
-  loadData();
-}
+// 1. triggered from router.js
+exports.enter = function (ctx){
+    if (content) {
+        ready(ctx);
+        return;
+    }
+    loadData(ctx);
+};
 
 // 2. Load data
-function loadData(){
-  state = 'loading';
+function loadData(ctx){
+    state = 'loading';
+    
+    if (data || ctx.state.static){
+        compileTemplate(ctx); 
+        return;
+    }
+    
+    Cockpit.request('/collections/get/spectacles').success(function(items){
+      data = items.slice(0,3); 
 
-  Cockpit.request('/collections/get/spectacles').success(function(items){
-    data = items.slice(0,3); 
+      // Cache data
+      ctx.state.static = data;
+      ctx.save();
 
-    /* media manager */
-    var imgs = items.map(function(item){ return item.visuel })
-    Cockpit
-    .request('/mediamanager/thumbnails', {
-      images: imgs,
-      w: 1920, h: 1080,
-      options: { quality : 80, mode : 'best_fit' }
-    })
-    .success(function(items){
-      // transmute object containing urls to array
-      items = Object.keys(items).map(function (key) {return items[key]});
-      // replace data.visuel props with actual urls
-      data.forEach(function(d,i){ d.visuel = items[i] })
+      /* media manager */
+      var imgs = items.map(function(item){ return item.visuel })
+      Cockpit
+      .request('/mediamanager/thumbnails', {
+        images: imgs,
+        w: 1920, h: 1080,
+        options: { quality : 80, mode : 'best_fit' }
+      })
+      .success(function(items){
+
+        // transmute object containing urls to array
+        items = Object.keys(items).map(function (key) {return items[key]});
+        // replace data.visuel props with actual urls
+        data.forEach(function(d,i){ d.visuel = items[i] })
 
 
-      // if state changed while loading cancel
-      if (state !== 'loading') return;
-      compileTemplate(data);
+        // if state changed while loading cancel
+        if (state !== 'loading') return;
+        compileTemplate(data);
+      });
     });
-  });
 }
 
 // 3. Compile a DOM element from the template and data
-function compileTemplate(data) {
-    var html = mustache.render(tpl, {items : data}) 
-    _content = parseHTML(html);
-    TweenLite.set(_content, {autoAlpha: 0})
+function compileTemplate(ctx) {
 
-    ready();
+    data = data || ctx.state.static // !!!
+
+    // var html = template({items: data});
+    var html = mustache.render(template, {items : data}) 
+    content = parseHTML(html);
+    ready(ctx);
 }
 
 // 4. Content is ready to be shown
-function ready() {
-  state = 'ready';
+function ready(ctx) {
+    state = 'ready';
 
-  // Select elements
-  document.body.appendChild(_content);
+    document.body.appendChild(content);
 
-  new swiper('.swiper-container', {
-    speed: 1200,
-    autoplay: 5000,
-    effect: 'fade',
-    fade: {
-      crossFade: true
-    },
-    paginationBulletRender: function (index, className) {
-      return '<span class="' + className + '">' + '0'+(index + 1) + '</span>';
-    },
-    pagination: '.swiper-pagination',
-    paginationClickable: true,
-    keyboardControl: true
-  });  
+    new swiper('.swiper-container', {
+      speed: 1200,
+      autoplay: 5000,
+      effect: 'fade',
+      fade: {
+        crossFade: true
+      },
+      paginationBulletRender: function (index, className) {
+        return '<span class="' + className + '">' + '0'+(index + 1) + '</span>';
+      },
+      pagination: '.swiper-pagination',
+      paginationClickable: true,
+      keyboardControl: true
+    });  
 
-  animateIn();
+    animateIn();
+    
+    // For resize:
+    //     either force a global resize from common.js
+    // pubsub.emit('global-resize');
+
+    //     or just keep it local
+    // resize(window.innerWidth, window.innerHeight);
 }
 
-// 5. animate in page
+// 5. Final step, animate in page
 function animateIn() {
-    TweenLite.to(_content, 1, {
+    TweenLite.to(content, 0.5, {
         autoAlpha: 1, 
-        force3D: true,
         onComplete: function() {
 
             // End of animation
@@ -103,24 +123,42 @@ function animateIn() {
 
 // Triggered from router.js
 exports.exit = function (ctx, next){
+  
+    // If user requests to leave before content loaded
+    if (state == 'off' || state == 'loading') {
+        console.log('left before loaded');
+        next();
+        return;
+    }
+    if (state == 'ready') console.log('still animating on quit');
+
+    state = 'leaving';
+    
+    animateOut(next);
+
+    // Let next view start loading
+    // next();
 };
 
 function animateOut(next) {
-  TweenLite.to(content, 0.5, {
-      autoAlpha: 0, 
-      onComplete: function() {
-          content.parentNode.removeChild(content);
+    TweenLite.to(content, 0.5, {
+        autoAlpha: 0, 
+        onComplete: function() {
+            content.parentNode.removeChild(content);
 
-          // End of animation
-          state = 'off';
+            // End of animation
+            state = 'off';
 
-          // Let next view start loading
-          next();
-      }
-  });
+            // Let next view start loading
+            next();
+        }
+    });
 }
 
 // Listen to global resizes
-pubsub.on('resize', resize)
+pubsub.on('resize', resize);
 function resize(_width, _height) { 
 }
+
+
+
