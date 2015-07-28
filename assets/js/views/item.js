@@ -93,26 +93,6 @@ function instance() {
 
         document.body.appendChild(content);
 
-        // preload({
-        //     id: 'home',
-        //     images: {
-        //         test: 'assets/img/test.jpg',
-        //     },
-        //     shaders: {
-        //         baseVert: 'assets/shaders/base_vert.glsl',
-        //     },
-        //     streams: {
-        //         buzz: 'assets/audio/buzz.mp3',
-        //     },
-        //     buffers: {
-        //         buzz: 'assets/audio/buzz.mp3',
-        //     },
-        // });
-
-        // pubsub.on('preload-home', function(_assets) {
-        //     console.log(_assets);
-        // });
-
         animateIn();
         
         // For resize:
