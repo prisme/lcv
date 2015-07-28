@@ -62,8 +62,13 @@
 
 	<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
 
+	<div class="menu">
+		<a href="/sandbox/lcv/spectacles/01">spectacles</a>
+		<a href="/sandbox/lcv/ateliers/">ateliers</a>
+	</div>
+
 	<footer>
-		<?php region('footer') ?>
+		<?php region('footer'); ?>
 	</footer>
 
 	<script src="assets/js/bundle.js"></script>
