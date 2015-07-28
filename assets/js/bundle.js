@@ -527,18 +527,8 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
-        console.log('ready', ctx)
-
         document.body.appendChild(content);
-
         animateIn();
-        
-        // For resize:
-        //     either force a global resize from common.js
-        // pubsub.emit('global-resize');
-
-        //     or just keep it local
-        // resize(window.innerWidth, window.innerHeight);
     }
 
     // 5. Final step, animate in page
@@ -546,7 +536,6 @@ function instance() {
         TweenLite.to(content, 0.5, {
             autoAlpha: 1, 
             onComplete: function() {
-
                 // End of animation
                 state = 'on';
             }
@@ -570,9 +559,6 @@ function instance() {
         delete ctx.instance;
         
         animateOut(next);
-
-        // Let next view start loading
-        // next();
     };
 
     function animateOut(next) {
@@ -667,18 +653,8 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
-        console.log('ready', ctx)
-
         document.body.appendChild(content);
-
         animateIn();
-        
-        // For resize:
-        //     either force a global resize from common.js
-        // pubsub.emit('global-resize');
-
-        //     or just keep it local
-        // resize(window.innerWidth, window.innerHeight);
     }
 
     // 5. Final step, animate in page
@@ -710,9 +686,6 @@ function instance() {
         delete ctx.instance;
         
         animateOut(next);
-
-        // Let next view start loading
-        // next();
     };
 
     function animateOut(next) {
