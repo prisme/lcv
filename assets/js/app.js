@@ -1,7 +1,5 @@
-console.log('▲')
-
 var common = require('common')
+var router = require('router')
 
-var home = require('home')
-home.enter()
-console.log(home)
+window._ROOT = '/sandbox/lcv'; 
+router.init(_ROOT);

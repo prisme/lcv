@@ -1,4 +1,5 @@
 <div class="section home">
+	<a href="spectacles/">spectacles</a>
 	<div class="swiper-container">
 		<div class="swiper-wrapper">
 			{{# items }}

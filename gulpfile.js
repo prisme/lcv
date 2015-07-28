@@ -16,7 +16,8 @@ var customOpts = {
     entries: ['./assets/js/app.js'],
     debug: true,
     transform: [
-      stringify({ extensions: ['.mst','.mustache'], minify: true })
+      stringify({ extensions: ['.mst','.mustache'], minify: true }),
+      'hbsify'
     ],
 
     // require(/path/to/file.js) directly from those paths

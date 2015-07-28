@@ -86,16 +86,9 @@ function ready() {
   });  
 
   animateIn();
-  
-  // For resize:
-  //     either force a global resize from common.js
-  // pubsub.emit('global-resize');
-
-  //     or just keep it local
-  // resize(window.innerWidth, window.innerHeight);
 }
 
-// 5. Final step, animate in page
+// 5. animate in page
 function animateIn() {
     TweenLite.to(_content, 1, {
         autoAlpha: 1, 
@@ -113,6 +106,18 @@ exports.exit = function (ctx, next){
 };
 
 function animateOut(next) {
+  TweenLite.to(content, 0.5, {
+      autoAlpha: 0, 
+      onComplete: function() {
+          content.parentNode.removeChild(content);
+
+          // End of animation
+          state = 'off';
+
+          // Let next view start loading
+          next();
+      }
+  });
 }
 
 // Listen to global resizes
