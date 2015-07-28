@@ -14,14 +14,13 @@
 
 <IfModule mod_rewrite.c>
   # Rewrite assets/* from any subfolder to root, except admin
-  # RewriteCond %{REQUEST_URI} !^cockpit
-  # RewriteCond %{REQUEST_URI} ^assets
-  # RewriteRule assets/(.*)$ assets/$1 [QSA,L]
+  RewriteCond %{REQUEST_URI} !^cockpit
+  RewriteRule assets/(.*)$ assets/$1 [QSA,L]
 
   # Redirect all but files to index, except admin
-  # RewriteCond %{REQUEST_FILENAME} !-f
-  # RewriteCond %{REQUEST_URI} !^cockpit
-  # RewriteRule .* index.php [QSA,L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_URI} !^cockpit
+  RewriteRule .* index.php [QSA,L]
 </IfModule>
 
 # ----------------------------------------------------------------------
