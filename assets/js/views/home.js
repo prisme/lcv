@@ -38,13 +38,9 @@ function loadData(ctx){
     }
     
     Cockpit.request('/collections/get/spectacles').success(function(items){
+      
       data = items.slice(0,3); 
-
-      console.log(items)
-
-      // Cache data
-      ctx.state.static = data;
-      ctx.save();
+      console.log(data)
 
       /* media manager */
       var imgs = items.map(function(item){ return item.visuel })
@@ -61,6 +57,9 @@ function loadData(ctx){
         // replace data.visuel props with actual urls
         data.forEach(function(d,i){ d.visuel = items[i] })
 
+        // Cache data
+        ctx.state.static = data;
+        ctx.save();
 
         // if state changed while loading cancel
         if (state !== 'loading') return;

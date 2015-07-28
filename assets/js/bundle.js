@@ -308,13 +308,9 @@ function loadData(ctx){
     }
     
     Cockpit.request('/collections/get/spectacles').success(function(items){
+      
       data = items.slice(0,3); 
-
-      console.log(items)
-
-      // Cache data
-      ctx.state.static = data;
-      ctx.save();
+      console.log(data)
 
       /* media manager */
       var imgs = items.map(function(item){ return item.visuel })
@@ -331,6 +327,9 @@ function loadData(ctx){
         // replace data.visuel props with actual urls
         data.forEach(function(d,i){ d.visuel = items[i] })
 
+        // Cache data
+        ctx.state.static = data;
+        ctx.save();
 
         // if state changed while loading cancel
         if (state !== 'loading') return;
@@ -483,34 +482,30 @@ function instance() {
             console.log(items)
             data = items;
 
-            // Cache data
-            ctx.state.instance = data;
-            ctx.save();
-
             /* media manager */
             var imgs = items.map(function(item){ return item.visuel })
             Cockpit
             .request('/mediamanager/thumbnails', {
-              images: imgs,
-              w: 1920, h: 1080,
-              options: { quality : 80, mode : 'best_fit' }
+                images: imgs,
+                w: 1920, h: 1080,
+                options: { quality : 80, mode : 'best_fit' }
             })
             .success(function(items){
 
-              // transmute object containing urls to array
-              items = Object.keys(items).map(function (key) {return items[key]});
-              // replace data.visuel props with actual urls
-              data.forEach(function(d,i){ d.visuel = items[i] })
+                // transmute object containing urls to array
+                items = Object.keys(items).map(function (key) {return items[key]});
+                // replace data.visuel props with actual urls
+                data.forEach(function(d,i){ d.visuel = items[i] })
 
+                // Cache data
+                ctx.state.instance = data;
+                ctx.save();
 
-              // if state changed while loading cancel
-              if (state !== 'loading') return;
-              compileTemplate(data);
+                // if state changed while loading cancel
+                if (state !== 'loading') return;
+                compileTemplate(data);
             });
 
-            // if state changed while loading cancel
-            // if (state !== 'loading') return;
-            // compileTemplate(ctx);
         });
         
     }
@@ -599,8 +594,7 @@ var template = require('list.hbs');
 function instance() {
     var _this = this;
 
-    // Current state of module
-    // Can also be 'loading', 'ready', 'on' and 'leaving'
+    // Current state of module :
     // 'off' = the module is inactive
     // 'loading' = the data is loading, nothing is shown
     // 'ready' = the content is ready, but still animating or preloading files
@@ -628,15 +622,37 @@ function instance() {
         .request('/collections/get/'+ctx.params.list)
         .success(function(items){
             console.log(items)
+            
+            // Prep data
+            items.forEach(function(e,i){
+              e.date = e.date.split('-')[0]
+            })
+
             data = items;
+            
+            // Media manager 
+            var imgs = items.map(function(item){ return item.visuel })
+            Cockpit
+            .request('/mediamanager/thumbnails', {
+                images: imgs,
+                w: 1920, h: 1080,
+                options: { quality : 70, mode : 'best_fit' }
+            })
+            .success(function(items){
+                // transmute object containing urls to array
+                items = Object.keys(items).map(function (key) {return items[key]});
+                // replace data.visuel props with actual urls
+                data.forEach(function(d,i){ d.visuel = items[i] })
 
-            // Cache data
-            ctx.state.instance = data;
-            ctx.save();
+                // Cache data
+                ctx.state.instance = data;
+                ctx.save();
 
-            // if state changed while loading cancel
-            if (state !== 'loading') return;
-            compileTemplate(ctx);
+                // if state changed while loading cancel
+                if (state !== 'loading') return;
+                compileTemplate(data);
+            });
+            
         });
         
     }
@@ -662,7 +678,6 @@ function instance() {
         TweenLite.to(content, 0.5, {
             autoAlpha: 1, 
             onComplete: function() {
-
                 // End of animation
                 state = 'on';
             }
@@ -20572,7 +20587,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"test\">\n	<a class=\"back\" href=\"../\">back</a>\n    ";
+  buffer += "<div class=\"test\">\n    ";
   options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
   if (helper = helpers.item) { stack1 = helper.call(depth0, options); }
   else { helper = (depth0 && depth0.item); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
@@ -20592,19 +20607,27 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n		<p><a href=\"";
+  buffer += "\n		<a href=\"";
   if (helper = helpers.titre_slug) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.titre_slug); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">";
+    + "\" class=\"item\">\n			<div class=\"item-date\">";
+  if (helper = helpers.date) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.date); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n			<div class=\"item-titre\">";
   if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.titre); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</a></p>\n	";
+    + "</div>\n			<!-- <img src=\"";
+  if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\"> -->\n		</a>\n	";
   return buffer;
   }
 
-  buffer += "<div class=\"home\">\n	<a class=\"back\" href=\"../\">back</a>	\n	";
+  buffer += "<div class=\"list\">\n	";
   options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
   if (helper = helpers.list) { stack1 = helper.call(depth0, options); }
   else { helper = (depth0 && depth0.list); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }

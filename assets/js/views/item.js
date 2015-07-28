@@ -45,34 +45,30 @@ function instance() {
             console.log(items)
             data = items;
 
-            // Cache data
-            ctx.state.instance = data;
-            ctx.save();
-
             /* media manager */
             var imgs = items.map(function(item){ return item.visuel })
             Cockpit
             .request('/mediamanager/thumbnails', {
-              images: imgs,
-              w: 1920, h: 1080,
-              options: { quality : 80, mode : 'best_fit' }
+                images: imgs,
+                w: 1920, h: 1080,
+                options: { quality : 80, mode : 'best_fit' }
             })
             .success(function(items){
 
-              // transmute object containing urls to array
-              items = Object.keys(items).map(function (key) {return items[key]});
-              // replace data.visuel props with actual urls
-              data.forEach(function(d,i){ d.visuel = items[i] })
+                // transmute object containing urls to array
+                items = Object.keys(items).map(function (key) {return items[key]});
+                // replace data.visuel props with actual urls
+                data.forEach(function(d,i){ d.visuel = items[i] })
 
+                // Cache data
+                ctx.state.instance = data;
+                ctx.save();
 
-              // if state changed while loading cancel
-              if (state !== 'loading') return;
-              compileTemplate(data);
+                // if state changed while loading cancel
+                if (state !== 'loading') return;
+                compileTemplate(data);
             });
 
-            // if state changed while loading cancel
-            // if (state !== 'loading') return;
-            // compileTemplate(ctx);
         });
         
     }

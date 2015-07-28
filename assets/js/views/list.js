@@ -12,8 +12,7 @@ var template = require('list.hbs');
 function instance() {
     var _this = this;
 
-    // Current state of module
-    // Can also be 'loading', 'ready', 'on' and 'leaving'
+    // Current state of module :
     // 'off' = the module is inactive
     // 'loading' = the data is loading, nothing is shown
     // 'ready' = the content is ready, but still animating or preloading files
@@ -41,15 +40,37 @@ function instance() {
         .request('/collections/get/'+ctx.params.list)
         .success(function(items){
             console.log(items)
+            
+            // Prep data
+            items.forEach(function(e,i){
+              e.date = e.date.split('-')[0]
+            })
+
             data = items;
+            
+            // Media manager 
+            var imgs = items.map(function(item){ return item.visuel })
+            Cockpit
+            .request('/mediamanager/thumbnails', {
+                images: imgs,
+                w: 1920, h: 1080,
+                options: { quality : 70, mode : 'best_fit' }
+            })
+            .success(function(items){
+                // transmute object containing urls to array
+                items = Object.keys(items).map(function (key) {return items[key]});
+                // replace data.visuel props with actual urls
+                data.forEach(function(d,i){ d.visuel = items[i] })
 
-            // Cache data
-            ctx.state.instance = data;
-            ctx.save();
+                // Cache data
+                ctx.state.instance = data;
+                ctx.save();
 
-            // if state changed while loading cancel
-            if (state !== 'loading') return;
-            compileTemplate(ctx);
+                // if state changed while loading cancel
+                if (state !== 'loading') return;
+                compileTemplate(data);
+            });
+            
         });
         
     }
@@ -75,7 +96,6 @@ function instance() {
         TweenLite.to(content, 0.5, {
             autoAlpha: 1, 
             onComplete: function() {
-
                 // End of animation
                 state = 'on';
             }
