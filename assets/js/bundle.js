@@ -645,7 +645,7 @@ function instance() {
     function compileTemplate(ctx) {
         data = data || ctx.state.instance
 
-        var html = template({ items: data })
+        var html = template({ list: data })
         content = parseHTML(html);
         ready(ctx);
     }
@@ -20606,9 +20606,9 @@ function program1(depth0,data) {
 
   buffer += "<div class=\"home\">\n	<a class=\"back\" href=\"../\">back</a>	\n	";
   options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
-  if (helper = helpers.items) { stack1 = helper.call(depth0, options); }
-  else { helper = (depth0 && depth0.items); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
-  if (!helpers.items) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
+  if (helper = helpers.list) { stack1 = helper.call(depth0, options); }
+  else { helper = (depth0 && depth0.list); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
+  if (!helpers.list) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>";
   return buffer;

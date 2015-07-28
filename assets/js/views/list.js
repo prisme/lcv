@@ -58,7 +58,7 @@ function instance() {
     function compileTemplate(ctx) {
         data = data || ctx.state.instance
 
-        var html = template({ items: data })
+        var html = template({ list: data })
         content = parseHTML(html);
         ready(ctx);
     }
