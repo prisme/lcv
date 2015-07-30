@@ -182,6 +182,9 @@ body > .logo{
 	text-decoration: none;
 }
 
+.debug .nav{
+	display: block;
+}
 
 .nav{
 	display: none;

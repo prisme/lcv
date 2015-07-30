@@ -18,3 +18,11 @@ var rootEl = document.body.parentNode
 
 window.LCV = {}
 LCV.isTouch = rootEl.classList.contains('touch');
+
+
+
+
+
+var debug = false;
+if(debug) 
+	document.body.classList.add('debug')
