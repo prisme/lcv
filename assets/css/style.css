@@ -1,9 +1,9 @@
-@import url("//hello.myfonts.net/count/2e4864");
-
 /* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
 
-
+/* vendor */
+@import url("//hello.myfonts.net/count/2e4864");
+@import url("nanoscroller");
 
 /* globals */
 * { box-sizing: border-box }
@@ -27,6 +27,8 @@ body,html {
 body{
 	font-family: Arial;
 	font-size: 16px;
+	background: black;
+	color: white;
 }
 
 
@@ -182,6 +184,7 @@ body > .logo{
 
 
 .nav{
+	display: none;
 	position: absolute;
 	z-index: 1;
 }
@@ -219,15 +222,15 @@ body > .logo{
 	text-transform: uppercase;
 }
 
-.home .swiper-container .description,
+.home .swiper-container .auteurs,
 .home .swiper-container .moment{
 	padding-left: 5px;
 }
 
-.home .swiper-container .description{
+.home .swiper-container .auteurs{
 	font-size: 16px;
 }
-.home .swiper-container .description strong{
+.home .swiper-container .auteurs strong{
 	font-family: 'PlutoCondBold';
 }
 
@@ -267,7 +270,57 @@ body > .logo{
 	display: inline-block;
 }
 
-.home .swiper-pagination-bullet-active{
-
+/* section-list */
+.section.list{
+	position: absolute;
+	width: 100%; height: 100%;
+	padding: 100px;
+	background: url(../img/list-default-bg.jpg) no-repeat;
+	background-size: cover;
+}
+.section.list:before{
+	content: "";
+	position: absolute;
+	top:0; right: 0; bottom: 0; left: 0;
+	background: rgba(0,0,0,0.4);
 }
 
+.section.list .titre{
+	position: relative;
+	float: left;
+	font-family: 'PlutoCondBold';
+	text-transform: uppercase;
+	color: #e34f42;
+	font-size: 18px;
+	letter-spacing: 0.2em;
+}
+
+.section.list .items{
+	position: relative;
+	z-index: 1;
+	margin-left: 220px;
+}
+
+.section.list .item{
+	text-decoration: none;
+	color: rgba(255,255,255,0.3);
+	display: block;
+	margin-bottom: 1.0em;
+	transition : color .3s ease-in-out;
+}
+
+.section.list .item:hover{
+	color: rgba(255,255,255,1);
+}
+
+.section.list .item-date{
+	font-family: 'PlutoCondLight';
+	font-size: 18px;
+	text-indent: 2px;
+}
+
+.section.list .item-title{
+	font-family: 'PlutoCondBold';
+	font-size: 36px;
+	text-transform: uppercase;
+}

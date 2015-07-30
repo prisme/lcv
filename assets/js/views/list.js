@@ -7,6 +7,9 @@ var gsap = require('gsap');
 var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
 
+var nanoscroller = require('nanoscroller');
+var $ = require('jquery');
+
 var template = require('list.hbs');
 
 function instance() {
@@ -43,7 +46,8 @@ function instance() {
             
             // Prep data
             items.forEach(function(e,i){
-              e.date = e.date.split('-')[0]
+                e.date = e.date.split('-')[0]
+                e.collection = ctx.params.list
             })
 
             data = items;
@@ -88,6 +92,11 @@ function instance() {
     function ready(ctx) {
         state = 'ready';
         document.body.appendChild(content);
+
+        // console.log($)
+
+        // $(".nano").nanoScroller();
+
         animateIn();
     }
 

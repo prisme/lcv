@@ -33,11 +33,9 @@ exports.init = function(ROOT) {
         switch(ctx.params.list){ 
             case 'ateliers' : case 'spectacles' : 
                 if( typeof ctx.params.item !== 'undefined'){
-                    console.log('item')
                     instance = item
                 }
                 else{
-                    console.log('list')
                     instance = list;
                 }
                 break;

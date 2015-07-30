@@ -1,9 +1,15 @@
-<div class="list">
-	{{#list}}
-		<a href="{{titre_slug}}" class="item">
-			<div class="item-date">{{date}}</div>
-			<div class="item-titre">{{titre}}</div>
-			<!-- <img src="{{visuel}}"> -->
-		</a>
-	{{/list}}
+<div class="section list">
+	<div class="titre">les spectacles</div>
+
+	<div class="_nano items">
+	    <div class="_nano-content">
+			{{#list}}
+				<a href="{{collection}}/{{titre_slug}}" class="item">
+					<div class="item-date">{{date}}</div>
+					<div class="item-title">{{titre}}</div>
+					<!-- <img src="{{visuel}}"> -->
+				</a>
+			{{/list}}
+	    </div>
+	</div>
 </div>

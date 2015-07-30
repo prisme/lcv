@@ -2,17 +2,18 @@
 [x] libs : gsap, swiper, nanoscroll …
 [x] router
 [ ] icon-close : SVG
+[ ] Analytics
+[x] buy Pluto font
+	[ ] buy condensed medium ?
 
 
-
-
-[ ] home 
-[ ] menu
-[ ] spectacles
-[ ] comediens
-[ ] ateliers
-[ ] presse
+[x] home 
+[x] menu
+[ ] list
+	[ ] liens
+	[ ] hover - img
+	[ ] nanoscroller
+[ ] fiche
 [ ] partenaires (static)
 [ ] contact form
 [ ] splash anim
-[x] buy Pluto font

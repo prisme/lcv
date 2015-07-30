@@ -7,6 +7,7 @@
 		$api_token = '59770a79e2c9238617d3ff8f';
 	}
 
+	$_ROOT = '/sandbox/lcv';
 ?>
 
 <!DOCTYPE html>
@@ -63,24 +64,24 @@
 	<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
 
 	<div class="nav">
-		<a href="/sandbox/lcv/">home</a>
-		<a href="/sandbox/lcv/spectacles/">spectacles</a>
-		<a href="/sandbox/lcv/spectacles/en-attendant-godot">spectacles/en-attendant-godot</a>
-		<a href="/sandbox/lcv/ateliers/">ateliers</a>
-		<a href="/sandbox/lcv/404/">404</a> 
+		<a href="<?=$_ROOT?>">home</a>
+		<a href="<?=$_ROOT?>spectacles/">spectacles</a>
+		<a href="<?=$_ROOT?>spectacles/en-attendant-godot">spectacles/en-attendant-godot</a>
+		<a href="<?=$_ROOT?>ateliers/">ateliers</a>
+		<a href="<?=$_ROOT?>404/">404</a> 
 	</div>
 	
 	<!-- todo : region -->
 	<div class="menu">
 		<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
 		<ul>
-			<li><a href="/" class="home">close</a></li>
-			<li><a href="/les-comediens-voyageurs">les comediens voyageurs</a></li>
-			<li><a href="/spectacles">spectacles</a></li>
-			<li><a href="/ateliers">ateliers</a></li>
-			<li><a href="/presse">presse</a></li>
-			<li><a href="/contact">contact</a></li>
-			<li><a href="#0" class="close">close</a></li>
+			<li><a href="<?=$_ROOT?>" class="home">close</a></li>
+			<li><a href="<?=$_ROOT?>/les-comediens-voyageurs">les comediens voyageurs</a></li>
+			<li><a href="<?=$_ROOT?>/spectacles">spectacles</a></li>
+			<li><a href="<?=$_ROOT?>/ateliers">ateliers</a></li>
+			<li><a href="<?=$_ROOT?>/presse">presse</a></li>
+			<li><a href="<?=$_ROOT?>/contact">contact</a></li>
+			<li><a href="#" class="close">close</a></li>
 		</ul>
 	</div>
 
