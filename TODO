@@ -1,5 +1,10 @@
 [x] gulp : browserify, autoprefixer
 [x] libs : gsap, swiper, nanoscroll …
+[x] router
+[ ] icon-close : SVG
+
+
+
 
 [ ] home 
 [ ] menu
@@ -10,4 +15,4 @@
 [ ] partenaires (static)
 [ ] contact form
 [ ] splash anim
-[ ] buy Pluto font
+[x] buy Pluto font

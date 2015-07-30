@@ -1,6 +1,7 @@
 var page = require('page');
 
 // Import all views
+var menu = require('menu');
 var home = require('home');
 var list = require('list'); 
 var item = require('item');
@@ -68,4 +69,7 @@ exports.init = function(ROOT) {
     // Activate page
     page.base(ROOT);
     page.start();
+
+    // init globals
+    menu.init();
 };

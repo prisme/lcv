@@ -62,12 +62,26 @@
 
 	<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
 
-	<div class="menu">
+	<div class="nav">
 		<a href="/sandbox/lcv/">home</a>
 		<a href="/sandbox/lcv/spectacles/">spectacles</a>
 		<a href="/sandbox/lcv/spectacles/en-attendant-godot">spectacles/en-attendant-godot</a>
 		<a href="/sandbox/lcv/ateliers/">ateliers</a>
 		<a href="/sandbox/lcv/404/">404</a> 
+	</div>
+	
+	<!-- todo : region -->
+	<div class="menu">
+		<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
+		<ul>
+			<li><a href="/" class="home">close</a></li>
+			<li><a href="/les-comediens-voyageurs">les comediens voyageurs</a></li>
+			<li><a href="/spectacles">spectacles</a></li>
+			<li><a href="/ateliers">ateliers</a></li>
+			<li><a href="/presse">presse</a></li>
+			<li><a href="/contact">contact</a></li>
+			<li><a href="#0" class="close">close</a></li>
+		</ul>
 	</div>
 
 	<footer>

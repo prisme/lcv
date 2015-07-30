@@ -13,4 +13,8 @@ window.addEventListener('resize', resize, false)
 // Can be forced from any
 pubsub.on('global-resize', resize)
 
+// feature detection
+var rootEl = document.body.parentNode
 
+window.LCV = {}
+LCV.isTouch = rootEl.classList.contains('touch');
