@@ -4,11 +4,11 @@
 			{{# items }}
 			<div class="swiper-slide table" style="background-image: url({{visuel}});">
 				<div class="cell">
-					<div class="txtblock">
-						<div class="moment pluto-bold">prochainement</div> {{! à dynamiser }}
+					<a class="txtblock" href="spectacles/{{titre_slug}}">
+						<div class="moment pluto-bold">{{statut}}</div>
 						<h1 class="title pluto-bold">{{titre}}</h1>
 						<div class="auteurs">{{{auteurs}}}</div>
-					</div>
+					</a>
 				</div>
 				<!--  <img src="{{visuel}}"> -->
 			</div>

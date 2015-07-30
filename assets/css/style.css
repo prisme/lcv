@@ -205,10 +205,11 @@ body > .logo{
 
 
 .home .swiper-container .txtblock{
+	display: block;
 	position: relative; 
 	width: 100%;
 	padding: 0 100px;
-
+	text-decoration: none;
 
 	margin-left: -5px;
 	line-height: 1.1;

@@ -61,19 +61,19 @@
 		<g><path fill-rule="evenodd" fill="#FFFFFF" d="M0 0h31v1H0V0z"/><path fill-rule="evenodd" fill="#FFFFFF" d="M0 7h31v1H0V7z"/><path fill-rule="evenodd" fill="#FFFFFF" d="M0 14h31v1H0V14z"/></g></svg>
 	</div>
 
-	<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
+	<a href="<?=$_ROOT?>" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
 
 	<div class="nav">
-		<a href="<?=$_ROOT?>">home</a>
-		<a href="<?=$_ROOT?>spectacles/">spectacles</a>
-		<a href="<?=$_ROOT?>spectacles/en-attendant-godot">spectacles/en-attendant-godot</a>
-		<a href="<?=$_ROOT?>ateliers/">ateliers</a>
-		<a href="<?=$_ROOT?>404/">404</a> 
+		<a href="<?=$_ROOT?>/">home</a>
+		<a href="<?=$_ROOT?>/spectacles/">spectacles</a>
+		<a href="<?=$_ROOT?>/spectacles/en-attendant-godot">spectacles/en-attendant-godot</a>
+		<a href="<?=$_ROOT?>/ateliers/">ateliers</a>
+		<a href="<?=$_ROOT?>/404/">404</a> 
 	</div>
 	
 	<!-- todo : region -->
 	<div class="menu">
-		<div class="logo"><img src="assets/img/logo.png" height="23" width="256"></div>
+		<a href="<?=$_ROOT?>" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
 		<ul>
 			<li><a href="<?=$_ROOT?>" class="home">close</a></li>
 			<li><a href="<?=$_ROOT?>/les-comediens-voyageurs">les comediens voyageurs</a></li>

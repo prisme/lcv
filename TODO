@@ -8,12 +8,14 @@
 
 
 [x] home 
+	[x] dynamiser Prochainement, En tournée, Au répertoire
 [x] menu
 [ ] list
 	[ ] liens
 	[ ] hover - img
 	[ ] nanoscroller
 [ ] fiche
+	[ ] galerie photo
 [ ] partenaires (static)
 [ ] contact form
 [ ] splash anim

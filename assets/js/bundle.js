@@ -25,6 +25,14 @@ var rootEl = document.body.parentNode
 
 window.LCV = {}
 LCV.isTouch = rootEl.classList.contains('touch');
+
+
+
+
+
+var debug = false;
+if(debug) 
+	document.body.classList.add('debug')
 },{"gsap":33,"pubsub":4}],3:[function(require,module,exports){
 /*
  *
@@ -634,7 +642,7 @@ function instance() {
             // Prep data
             items.forEach(function(e,i){
                 e.date = e.date.split('-')[0]
-                e.collection = ctx.params.list
+                e.root = _ROOT +'/'+ ctx.params.list
             })
 
             data = items;
@@ -30786,7 +30794,15 @@ function program1(depth0,data) {
   if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + ");\">\n				<div class=\"cell\">\n					<div class=\"txtblock\">\n						<div class=\"moment pluto-bold\">prochainement</div> \n						<h1 class=\"title pluto-bold\">";
+    + ");\">\n				<div class=\"cell\">\n					<a class=\"txtblock\" href=\"spectacles/";
+  if (helper = helpers.titre_slug) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.titre_slug); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n						<div class=\"moment pluto-bold\">";
+  if (helper = helpers.statut) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.statut); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n						<h1 class=\"title pluto-bold\">";
   if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.titre); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -30794,7 +30810,7 @@ function program1(depth0,data) {
   if (helper = helpers.auteurs) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.auteurs); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</div>\n					</div>\n				</div>\n				<!--  <img src=\"";
+  buffer += "</div>\n					</a>\n				</div>\n				<!--  <img src=\"";
   if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -30859,8 +30875,8 @@ function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n				<a href=\"";
-  if (helper = helpers.collection) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.collection); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.root) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.root); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "/";
   if (helper = helpers.titre_slug) { stack1 = helper.call(depth0, {hash:{},data:data}); }
