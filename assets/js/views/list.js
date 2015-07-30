@@ -47,7 +47,7 @@ function instance() {
             // Prep data
             items.forEach(function(e,i){
                 e.date = e.date.split('-')[0]
-                e.collection = ctx.params.list
+                e.root = _ROOT +'/'+ ctx.params.list
             })
 
             data = items;
