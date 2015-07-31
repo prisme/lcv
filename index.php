@@ -1,13 +1,13 @@
 <?php 
 	require_once("cockpit/bootstrap.php"); 
 	if ( strstr('bf5aed9f82.url-de-test.ws', $_SERVER['HTTP_HOST'] ) != false ){
-		$api_token = '6f09fab8bab3dfe648b41a09';
+		$_ROOT = '';
 	}
 	else{
-		$api_token = '59770a79e2c9238617d3ff8f';
+		$_ROOT = '/sandbox/lcv';
 	}
+	$api_token = '59770a79e2c9238617d3ff8f';
 
-	$_ROOT = '/sandbox/lcv';
 ?>
 
 <!DOCTYPE html>

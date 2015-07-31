@@ -2,7 +2,8 @@
 var common = require('common')
 var router = require('router')
 
-window._ROOT = '/sandbox/lcv'; 
+// window._ROOT = '/sandbox/lcv'; 
+window._ROOT = ''; 
 router.init(_ROOT);
 },{"common":2,"router":5}],2:[function(require,module,exports){
 // Global stuff (not module-dependant, preloading, etc)
@@ -30898,7 +30899,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"section list\">\n	<div class=\"titre\">les spectacles</div>\n\n	<div class=\"_nano items\">\n	    <div class=\"_nano-content\">\n			";
+  buffer += "<div class=\"section list\">\n	<div class=\"titre\">les spectacles</div>\n\n	<div class=\"nano items\">\n	    <div class=\"nano-content\">\n			";
   options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
   if (helper = helpers.list) { stack1 = helper.call(depth0, options); }
   else { helper = (depth0 && depth0.list); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
