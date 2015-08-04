@@ -47,7 +47,7 @@ function instance() {
             // Prep data
             items.forEach(function(e,i){
                 e.date = e.date.split('-')[0]
-                e.root = _ROOT +'/'+ ctx.params.list
+                e.root = rootPath +'/'+ ctx.params.list
             })
 
             data = items;
@@ -91,7 +91,7 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
-        document.body.appendChild(content);
+        rootEl.appendChild(content);
 
         // console.log($)
 

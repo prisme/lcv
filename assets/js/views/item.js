@@ -85,7 +85,7 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
-        document.body.appendChild(content);
+        rootEl.appendChild(content);
         animateIn();
     }
 

@@ -2,9 +2,10 @@
 var common = require('common')
 var router = require('router')
 
-// window._ROOT = '/sandbox/lcv'; 
-window._ROOT = ''; 
-router.init(_ROOT);
+window.rootPath = window.location.href.indexOf('localhost') > -1 ? '/sandbox/lcv' : ''
+window.rootEl = document.querySelector('.page')
+
+router.init(rootPath)
 },{"common":2,"router":5}],2:[function(require,module,exports){
 // Global stuff (not module-dependant, preloading, etc)
 var pubsub = require('pubsub')
@@ -97,7 +98,7 @@ var em = {
 
     _addListener: function(call, listener, once) {
         if (typeof listener !== 'function') {
-            console.error('listener must be a function');
+            console.info('listener must be a function');
             return;
         }
 
@@ -113,7 +114,7 @@ var em = {
             return true;
         });
         if (match) {
-            console.error('listener already subscribed');
+            console.info('listener already subscribed');
             return;
         }
 
@@ -145,7 +146,7 @@ var em = {
         // If precise listener included, only remove that listing
         if (listener) {
             if (!_listeners[call]) {
-                console.error('Event "' + call + '" doesn\'t exist');
+                console.info('Event "' + call + '" doesn\'t exist');
                 return;
             }
 
@@ -175,7 +176,7 @@ var em = {
 
     emit: function (call) {
         if (!_listeners[call]) {
-            console.error('Noone listening to event: "' + call + '"');
+            console.info('Noone listening to event: "' + call + '"');
             return;
         }
 
@@ -367,9 +368,9 @@ function compileTemplate(ctx) {
 function ready(ctx) {
     state = 'ready';
 
-    document.body.appendChild(content);
+    rootEl.appendChild(content);
 
-    new swiper('.swiper-container', {
+    var homeSwiper = new swiper('.swiper-container', {
       speed: 1200,
       autoplay: 5000,
       effect: 'fade',
@@ -383,6 +384,9 @@ function ready(ctx) {
       paginationClickable: true,
       keyboardControl: true
     });  
+
+    pubsub.on('menu:open', homeSwiper.stopAutoplay)
+    pubsub.on('menu:close', homeSwiper.startAutoplay)
 
     animateIn();
     
@@ -536,7 +540,7 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
-        document.body.appendChild(content);
+        rootEl.appendChild(content);
         animateIn();
     }
 
@@ -643,7 +647,7 @@ function instance() {
             // Prep data
             items.forEach(function(e,i){
                 e.date = e.date.split('-')[0]
-                e.root = _ROOT +'/'+ ctx.params.list
+                e.root = rootPath +'/'+ ctx.params.list
             })
 
             data = items;
@@ -687,7 +691,7 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
-        document.body.appendChild(content);
+        rootEl.appendChild(content);
 
         // console.log($)
 
@@ -751,8 +755,9 @@ function instance() {
 
 },{"gsap":33,"jquery":52,"list.hbs":62,"nanoscroller":54,"page":56,"parseHTML":3,"pubsub":4}],9:[function(require,module,exports){
 var gsap = require('gsap')
+var pubsub = require('pubsub')
 
-var _content, _openPrompt, _closePrompt, _logo, _links
+var _component, _openPrompt, _closePrompt, _logo, _links, _hidden
 
 exports.init = function() {
     ready()
@@ -760,15 +765,16 @@ exports.init = function() {
 }
 
 function ready(){
-	_content = document.querySelector('.menu')
+	_component = document.querySelector('.menu')
 	_openPrompt = document.querySelector('.menu-prompt')
 	_closePrompt = document.querySelector('.menu .close')
 	_logo =  document.querySelector('.logo')
-	_links = _content.querySelectorAll('a')
+	_links = _component.querySelectorAll('a')
+	_hidden = null
 
 	_closePrompt.dataset.preventDefault = true;
 
-	TweenLite.set(_content, {autoAlpha:0})
+	TweenLite.set(_component, {autoAlpha:0})
 }
 
 function addHandlers(){
@@ -782,19 +788,39 @@ function addHandlers(){
 	};
 	
 	function show(){
-		TweenLite.to(_content, 0.5, { autoAlpha: 1})
+		// set once : menu has to be shown before it can be hidden
+		_hidden = hiddenElements() 
+		
+		TweenLite.to(_component, 0.5, { autoAlpha: 1})
 		TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 0})
+		TweenLite.to(_hidden, 0.1, { autoAlpha: 0})
+
+		pubsub.emit('menu:open')
 	}
 
 	function hide(e){
 		if( !!e.target.dataset.preventDefault )
 			e.preventDefault();
 
-		TweenLite.to(_content, 0.5, { autoAlpha: 0})
+		TweenLite.to(_component, 0.5, { autoAlpha: 0})
 		TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
+		TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
+
+		pubsub.emit('menu:close')
+	}
+
+	function hiddenElements(){		
+		var elts = rootEl.querySelectorAll('.section .menu-hide')
+
+		if( !elts.length )
+			elts = rootEl.querySelectorAll('.section *')
+
+		console.log(elts)
+
+		return elts
 	}
 }
-},{"gsap":33}],10:[function(require,module,exports){
+},{"gsap":33,"pubsub":4}],10:[function(require,module,exports){
 
 },{}],11:[function(require,module,exports){
 arguments[4][10][0].apply(exports,arguments)
@@ -30795,7 +30821,7 @@ function program1(depth0,data) {
   if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + ");\">\n				<div class=\"cell\">\n					<a class=\"txtblock\" href=\"spectacles/";
+    + ");\">\n				<div class=\"cell menu-hide\">\n					<a class=\"txtblock\" href=\"spectacles/";
   if (helper = helpers.titre_slug) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.titre_slug); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -30825,7 +30851,7 @@ function program1(depth0,data) {
   else { helper = (depth0 && depth0.items); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
   if (!helpers.items) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		</div>\n		<div class=\"swiper-pagination\"></div>\n	</div>\n</div>";
+  buffer += "\n		</div>\n		<div class=\"swiper-pagination menu-hide\"></div>\n	</div>\n</div>";
   return buffer;
   });
 

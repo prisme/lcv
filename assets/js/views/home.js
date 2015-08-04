@@ -83,9 +83,9 @@ function compileTemplate(ctx) {
 function ready(ctx) {
     state = 'ready';
 
-    document.body.appendChild(content);
+    rootEl.appendChild(content);
 
-    new swiper('.swiper-container', {
+    var homeSwiper = new swiper('.swiper-container', {
       speed: 1200,
       autoplay: 5000,
       effect: 'fade',
@@ -99,6 +99,9 @@ function ready(ctx) {
       paginationClickable: true,
       keyboardControl: true
     });  
+
+    pubsub.on('menu:open', homeSwiper.stopAutoplay)
+    pubsub.on('menu:close', homeSwiper.startAutoplay)
 
     animateIn();
     

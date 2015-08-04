@@ -1,6 +1,7 @@
 var gsap = require('gsap')
+var pubsub = require('pubsub')
 
-var _content, _openPrompt, _closePrompt, _logo, _links
+var _component, _openPrompt, _closePrompt, _logo, _links, _hidden
 
 exports.init = function() {
     ready()
@@ -8,15 +9,16 @@ exports.init = function() {
 }
 
 function ready(){
-	_content = document.querySelector('.menu')
+	_component = document.querySelector('.menu')
 	_openPrompt = document.querySelector('.menu-prompt')
 	_closePrompt = document.querySelector('.menu .close')
 	_logo =  document.querySelector('.logo')
-	_links = _content.querySelectorAll('a')
+	_links = _component.querySelectorAll('a')
+	_hidden = null
 
 	_closePrompt.dataset.preventDefault = true;
 
-	TweenLite.set(_content, {autoAlpha:0})
+	TweenLite.set(_component, {autoAlpha:0})
 }
 
 function addHandlers(){
@@ -30,15 +32,35 @@ function addHandlers(){
 	};
 	
 	function show(){
-		TweenLite.to(_content, 0.5, { autoAlpha: 1})
+		// set once : menu has to be shown before it can be hidden
+		_hidden = hiddenElements() 
+		
+		TweenLite.to(_component, 0.5, { autoAlpha: 1})
 		TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 0})
+		TweenLite.to(_hidden, 0.1, { autoAlpha: 0})
+
+		pubsub.emit('menu:open')
 	}
 
 	function hide(e){
 		if( !!e.target.dataset.preventDefault )
 			e.preventDefault();
 
-		TweenLite.to(_content, 0.5, { autoAlpha: 0})
+		TweenLite.to(_component, 0.5, { autoAlpha: 0})
 		TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
+		TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
+
+		pubsub.emit('menu:close')
+	}
+
+	function hiddenElements(){		
+		var elts = rootEl.querySelectorAll('.section .menu-hide')
+
+		if( !elts.length )
+			elts = rootEl.querySelectorAll('.section *')
+
+		console.log(elts)
+
+		return elts
 	}
 }

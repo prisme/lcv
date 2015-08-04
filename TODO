@@ -8,14 +8,26 @@
 
 
 [x] home 
-	[x] dynamiser Prochainement, En tournée, Au répertoire
+	[x] dynamiser :Prochainement, En tournée, Au répertoire
+	[ ] tri par date de spectacle (!modification) + champ "ordre homepage"
+
 [x] menu
+	[x] masquer les textes de la vue en cours
+		[x] pause home slider onShow
+	[ ] sous-menu les comédiens voyageurs
+
 [ ] list
-	[ ] liens
+	[x] liens
 	[ ] hover - img
 	[ ] nanoscroller
+	[ ] tri par date de spectacle (!modification) + champ "ordre homepage"
+
 [ ] fiche
+	[ ] layout
 	[ ] galerie photo
-[ ] partenaires (static)
+	[ ] galerie fichiers
+
+[ ] les comédiens voyageurs
+
 [ ] contact form
 [ ] splash anim

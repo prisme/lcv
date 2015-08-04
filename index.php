@@ -85,9 +85,13 @@
 		</ul>
 	</div>
 
-	<footer>
-		<?php region('footer'); ?>
-	</footer>
+	<div class="page">
+		
+		<footer class="menu-hide">
+			<?php region('footer'); ?>
+		</footer>
+	</div>
+
 
 	<script src="assets/js/bundle.js"></script>
 </body>

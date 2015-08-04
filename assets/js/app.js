@@ -1,9 +1,7 @@
 var common = require('common')
 var router = require('router')
 
-if ( !!window.location.href.indexOf('localhost') > -1 )
-	window._ROOT = '/sandbox/lcv'; 
-else
-	window._ROOT = ''; 
+window.rootPath = window.location.href.indexOf('localhost') > -1 ? '/sandbox/lcv' : ''
+window.rootEl = document.querySelector('.page')
 
-router.init(_ROOT);
+router.init(rootPath)

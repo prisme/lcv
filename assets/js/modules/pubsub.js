@@ -32,7 +32,7 @@ var em = {
 
     _addListener: function(call, listener, once) {
         if (typeof listener !== 'function') {
-            console.error('listener must be a function');
+            console.info('listener must be a function');
             return;
         }
 
@@ -48,7 +48,7 @@ var em = {
             return true;
         });
         if (match) {
-            console.error('listener already subscribed');
+            console.info('listener already subscribed');
             return;
         }
 
@@ -80,7 +80,7 @@ var em = {
         // If precise listener included, only remove that listing
         if (listener) {
             if (!_listeners[call]) {
-                console.error('Event "' + call + '" doesn\'t exist');
+                console.info('Event "' + call + '" doesn\'t exist');
                 return;
             }
 
@@ -110,7 +110,7 @@ var em = {
 
     emit: function (call) {
         if (!_listeners[call]) {
-            console.error('Noone listening to event: "' + call + '"');
+            console.info('Noone listening to event: "' + call + '"');
             return;
         }
 
