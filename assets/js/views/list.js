@@ -6,9 +6,7 @@ var page = require('page');
 var gsap = require('gsap');
 var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
-
-var nanoscroller = require('nanoscroller');
-var $ = require('jquery');
+var Ps = require('perfect-scrollbar');
 
 var template = require('list.hbs');
 
@@ -23,7 +21,7 @@ function instance() {
     // 'leaving' = exit has been called, animating out
     var state = 'off';
 
-    var data, content;
+    var data, content, container;
 
     // 1. triggered from router.js
     _this.enter = function (ctx){
@@ -93,9 +91,8 @@ function instance() {
         state = 'ready';
         rootEl.appendChild(content);
 
-        // console.log($)
-
-        // $(".nano").nanoScroller();
+        container = document.querySelector('.section.list .items');
+        Ps.initialize(container);
 
         animateIn();
     }
@@ -134,6 +131,7 @@ function instance() {
         TweenLite.to(content, 0.5, {
             autoAlpha: 0, 
             onComplete: function() {
+                Ps.destroy(container);
                 content.parentNode.removeChild(content);
 
                 // End of animation

@@ -1,15 +1,13 @@
 <div class="section list">
 	<div class="titre">les spectacles</div>
 
-	<div class="nano items">
-	    <div class="nano-content">
-			{{#list}}
-				<a href="{{root}}/{{titre_slug}}" class="item">
-					<div class="item-date">{{date}}</div>
-					<div class="item-title">{{titre}}</div>
-					<!-- <img src="{{visuel}}"> -->
-				</a>
-			{{/list}}
-	    </div>
+	<div class="items">
+		{{#list}}
+			<a href="{{root}}/{{titre_slug}}" class="item">
+				<div class="item-date">{{date}}</div>
+				<div class="item-title">{{titre}}</div>
+				<!-- <img src="{{visuel}}"> -->
+			</a>
+		{{/list}}
 	</div>
 </div>
