@@ -6,6 +6,7 @@ var page = require('page');
 var gsap = require('gsap');
 var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
+var Ps = require('perfect-scrollbar');
 
 var template = require('item.hbs');
 
@@ -23,7 +24,7 @@ function instance() {
     // 'leaving' = exit has been called, animating out
     var state = 'off';
 
-    var data, content;
+    var data, content, container;
 
     // 1. triggered from router.js
     _this.enter = function (ctx){
@@ -51,7 +52,7 @@ function instance() {
             .request('/mediamanager/thumbnails', {
                 images: imgs,
                 w: 1920, h: 1080,
-                options: { quality : 80, mode : 'best_fit' }
+                options: { quality : 60, mode : 'best_fit' }
             })
             .success(function(items){
 
@@ -85,14 +86,26 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
+
+        TweenLite.set(content, {autoAlpha: 0});
         rootEl.appendChild(content);
+
+        container = document.querySelector('.item .wrap');
+        Ps.initialize(container);
+
+        setTimeout(function(){
+            var img = document.querySelector('.visual')
+            content.style.backgroundImage = 'url(' + img.src + ')'
+        }, 0)
+        
         animateIn();
     }
 
     // 5. Final step, animate in page
     function animateIn() {
-        TweenLite.to(content, 0.5, {
-            autoAlpha: 1, 
+        TweenLite.to(content, 0.7, {
+            autoAlpha: 1,
+            ease: Power1.easeIn, 
             onComplete: function() {
                 // End of animation
                 state = 'on';
@@ -105,11 +118,11 @@ function instance() {
 
         // If user requests to leave before content loaded
         if (state == 'off' || state == 'loading') {
-            console.log('left before loaded');
+            console.info('left before loaded');
             next();
             return;
         }
-        if (state == 'ready') console.log('still animating on quit');
+        if (state == 'ready') console.info('still animating on quit');
 
         state = 'leaving';
 
@@ -122,7 +135,9 @@ function instance() {
     function animateOut(next) {
         TweenLite.to(content, 0.5, {
             autoAlpha: 0, 
+            ease: Power1.easeOut, 
             onComplete: function() {
+                Ps.destroy(container);
                 content.parentNode.removeChild(content);
 
                 // End of animation
@@ -137,7 +152,7 @@ function instance() {
     // Listen to global resizes
     pubsub.on('resize', resize);
     function resize(_width, _height) { 
-        
+        Ps.update(container);
     }
 
 }

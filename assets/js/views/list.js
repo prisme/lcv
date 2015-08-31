@@ -89,7 +89,9 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
+        TweenLite.set(content, {autoAlpha: 0});
         rootEl.appendChild(content);
+
 
         container = document.querySelector('.section.list .items');
         Ps.initialize(container);
@@ -99,8 +101,9 @@ function instance() {
 
     // 5. Final step, animate in page
     function animateIn() {
-        TweenLite.to(content, 0.5, {
+        TweenLite.to(content, 0.7, {
             autoAlpha: 1, 
+            ease: Power1.easeIn, 
             onComplete: function() {
                 // End of animation
                 state = 'on';
@@ -113,11 +116,11 @@ function instance() {
 
         // If user requests to leave before content loaded
         if (state == 'off' || state == 'loading') {
-            console.log('left before loaded');
+            console.info('left before loaded');
             next();
             return;
         }
-        if (state == 'ready') console.log('still animating on quit');
+        if (state == 'ready') console.info('still animating on quit');
 
         state = 'leaving';
 
@@ -130,6 +133,7 @@ function instance() {
     function animateOut(next) {
         TweenLite.to(content, 0.5, {
             autoAlpha: 0, 
+            ease: Power1.easeOut, 
             onComplete: function() {
                 Ps.destroy(container);
                 content.parentNode.removeChild(content);
@@ -146,7 +150,7 @@ function instance() {
     // Listen to global resizes
     pubsub.on('resize', resize);
     function resize(_width, _height) { 
-        
+        Ps.update(container);
     }
 
 }

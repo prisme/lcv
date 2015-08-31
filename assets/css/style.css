@@ -92,11 +92,6 @@ body{
 	color: rgba(200,200,200,0.6);
 }
 
-.section{
-	position: relative;
-	z-index: 0;
-}
-
 .table{
 	display: table
 }
@@ -116,6 +111,7 @@ body > .logo{
 	right: 100px;
 }
 
+/* menu */
 .menu .logo{
 	left: 50%; transform: translateX(-50%);
 }
@@ -194,7 +190,30 @@ body > .logo{
 }
 
 
+/* sections */
+.section{
+	z-index: 0;
+	position: absolute;
+	width: 100%; height: 100%;
+	padding: 100px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+}
+
+.section:before{
+	content: "";
+	position: fixed;
+	top:0; right: 0; bottom: 0; left: 0;
+	background: rgba(0,0,0,0.4);
+}
+
 /* home */
+.section.home{ 
+	position: relative;
+	width: auto; height: auto; padding: 0;
+}
+
 .home .swiper-slide{
 	background-size: cover;
 	height: 100vh;
@@ -271,20 +290,10 @@ body > .logo{
 	display: inline-block;
 }
 
+
 /* section-list */
 .section.list{
-	position: absolute;
-	width: 100%; height: 100%;
-	padding: 100px;
-	background: url(../img/list-default-bg.jpg) no-repeat;
-	background-size: cover;
-	background-attachment: fixed;
-}
-.section.list:before{
-	content: "";
-	position: absolute;
-	top:0; right: 0; bottom: 0; left: 0;
-	background: rgba(0,0,0,0.4);
+	background-image: url(../img/list-default-bg.jpg);
 }
 
 .section.list .titre{
@@ -328,6 +337,44 @@ body > .logo{
 	font-size: 36px;
 	text-transform: uppercase;
 }
+
+/* section-item */
+.section.item{}
+
+.section.item .wrap{
+	position: relative;
+	z-index: 1;
+	height: calc(100% - 5em);
+	margin-left: 17.5vw;
+	margin-top: 10vh;
+}
+
+.section.item .status,
+.section.item .title{
+	font-family: PlutoCondBold;
+	text-transform: uppercase;
+}
+
+.section.item .status{
+	color: #ff3437;
+	font-size: 18px;
+}
+
+.section.item .title{
+	margin-bottom: 0.5em;
+	font-size: 36px;
+	color: #fff;
+}
+
+.section.item .description p{
+	margin-bottom: 1.5em;
+	line-height: 1.5em;
+}
+
+.section.item .visual{
+	display: none;
+}
+
 
 /* vendor */
 @import url("//hello.myfonts.net/count/2e4864");

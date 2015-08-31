@@ -461,6 +461,7 @@ var page = require('page');
 var gsap = require('gsap');
 var parseHTML = require('parseHTML');
 var pubsub = require('pubsub');
+var Ps = require('perfect-scrollbar');
 
 var template = require('item.hbs');
 
@@ -478,7 +479,7 @@ function instance() {
     // 'leaving' = exit has been called, animating out
     var state = 'off';
 
-    var data, content;
+    var data, content, container;
 
     // 1. triggered from router.js
     _this.enter = function (ctx){
@@ -506,7 +507,7 @@ function instance() {
             .request('/mediamanager/thumbnails', {
                 images: imgs,
                 w: 1920, h: 1080,
-                options: { quality : 80, mode : 'best_fit' }
+                options: { quality : 60, mode : 'best_fit' }
             })
             .success(function(items){
 
@@ -540,14 +541,26 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
+
+        TweenLite.set(content, {autoAlpha: 0});
         rootEl.appendChild(content);
+
+        container = document.querySelector('.item .wrap');
+        Ps.initialize(container);
+
+        setTimeout(function(){
+            var img = document.querySelector('.visual')
+            content.style.backgroundImage = 'url(' + img.src + ')'
+        }, 0)
+        
         animateIn();
     }
 
     // 5. Final step, animate in page
     function animateIn() {
-        TweenLite.to(content, 0.5, {
-            autoAlpha: 1, 
+        TweenLite.to(content, 0.7, {
+            autoAlpha: 1,
+            ease: Power1.easeIn, 
             onComplete: function() {
                 // End of animation
                 state = 'on';
@@ -560,11 +573,11 @@ function instance() {
 
         // If user requests to leave before content loaded
         if (state == 'off' || state == 'loading') {
-            console.log('left before loaded');
+            console.info('left before loaded');
             next();
             return;
         }
-        if (state == 'ready') console.log('still animating on quit');
+        if (state == 'ready') console.info('still animating on quit');
 
         state = 'leaving';
 
@@ -577,7 +590,9 @@ function instance() {
     function animateOut(next) {
         TweenLite.to(content, 0.5, {
             autoAlpha: 0, 
+            ease: Power1.easeOut, 
             onComplete: function() {
+                Ps.destroy(container);
                 content.parentNode.removeChild(content);
 
                 // End of animation
@@ -592,12 +607,12 @@ function instance() {
     // Listen to global resizes
     pubsub.on('resize', resize);
     function resize(_width, _height) { 
-        
+        Ps.update(container);
     }
 
 }
 
-},{"gsap":33,"item.hbs":78,"page":53,"parseHTML":3,"pubsub":4}],8:[function(require,module,exports){
+},{"gsap":33,"item.hbs":78,"page":53,"parseHTML":3,"perfect-scrollbar":56,"pubsub":4}],8:[function(require,module,exports){
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
 module.exports = instance;
@@ -689,7 +704,9 @@ function instance() {
     // 4. Content is ready to be shown
     function ready(ctx) {
         state = 'ready';
+        TweenLite.set(content, {autoAlpha: 0});
         rootEl.appendChild(content);
+
 
         container = document.querySelector('.section.list .items');
         Ps.initialize(container);
@@ -699,8 +716,9 @@ function instance() {
 
     // 5. Final step, animate in page
     function animateIn() {
-        TweenLite.to(content, 0.5, {
+        TweenLite.to(content, 0.7, {
             autoAlpha: 1, 
+            ease: Power1.easeIn, 
             onComplete: function() {
                 // End of animation
                 state = 'on';
@@ -713,11 +731,11 @@ function instance() {
 
         // If user requests to leave before content loaded
         if (state == 'off' || state == 'loading') {
-            console.log('left before loaded');
+            console.info('left before loaded');
             next();
             return;
         }
-        if (state == 'ready') console.log('still animating on quit');
+        if (state == 'ready') console.info('still animating on quit');
 
         state = 'leaving';
 
@@ -730,6 +748,7 @@ function instance() {
     function animateOut(next) {
         TweenLite.to(content, 0.5, {
             autoAlpha: 0, 
+            ease: Power1.easeOut, 
             onComplete: function() {
                 Ps.destroy(container);
                 content.parentNode.removeChild(content);
@@ -746,7 +765,7 @@ function instance() {
     // Listen to global resizes
     pubsub.on('resize', resize);
     function resize(_width, _height) { 
-        
+        Ps.update(container);
     }
 
 }
@@ -22092,23 +22111,27 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n	    <h1>";
+  buffer += "\n    	<div class=\"wrap\">\n		    <div class=\"status\">";
+  if (helper = helpers.statut) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.statut); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n		    <h1 class=\"title\">";
   if (helper = helpers.titre) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.titre); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\n    	<p>";
+    + "</h1>\n	    	<div class=\"description\">";
   if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</p>\n    	<img src=\"";
+  buffer += "</div>\n	    	<img class=\"visual\" src=\"";
   if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n    ";
+    + "\">\n    	</div>\n    ";
   return buffer;
   }
 
-  buffer += "<div class=\"test\">\n    ";
+  buffer += "<div class=\"section item\">\n    ";
   options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
   if (helper = helpers.item) { stack1 = helper.call(depth0, options); }
   else { helper = (depth0 && depth0.item); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
