@@ -59,7 +59,10 @@ body{
 
 
 /* vendor */
-@import 'swiper.min.css';
+@import url("//hello.myfonts.net/count/2e4864");
+@import url("perfect-scrollbar"); /* NB : added "style" property to this module package.json */
+@import url("swiper");
+
 
 /* common */
 .page > footer{
@@ -110,6 +113,23 @@ body{
 body > .logo{
 	right: 100px;
 }
+
+
+/* scrollbar overrides */
+.section .ps-container>.ps-scrollbar-y-rail,
+.section .ps-container>.ps-scrollbar-y-rail>.ps-scrollbar-y{
+	border-radius: 0;
+	width: 1px;
+}
+.section .ps-container:hover>.ps-scrollbar-y-rail,
+.section .ps-container>.ps-scrollbar-y-rail{
+	opacity: 1;
+	background: rgba(255,255,255,0.2);
+}
+.section .ps-container>.ps-scrollbar-y-rail>.ps-scrollbar-y{
+	background: white;
+}
+
 
 /* menu */
 .menu .logo{
@@ -208,6 +228,7 @@ body > .logo{
 	background: rgba(0,0,0,0.4);
 }
 
+
 /* home */
 .section.home{ 
 	position: relative;
@@ -218,7 +239,6 @@ body > .logo{
 	background-size: cover;
 	height: 100vh;
 }
-
 
 .home .swiper-container .txtblock{
 	display: block;
@@ -302,7 +322,7 @@ body > .logo{
 	float: left;
 	font-family: 'PlutoCondBold';
 	text-transform: uppercase;
-	color: #e34f42;
+	color: var(--redColor);
 	font-size: 18px;
 	letter-spacing: 0.2em;
 }
@@ -337,6 +357,7 @@ body > .logo{
 	font-size: 36px;
 	text-transform: uppercase;
 }
+
 
 /* section-item */
 .section.item{}
@@ -373,24 +394,4 @@ body > .logo{
 
 .section.item .visual{
 	display: none;
-}
-
-
-/* vendor */
-@import url("//hello.myfonts.net/count/2e4864");
-@import url("perfect-scrollbar");
-
-/* vendor overrides */
-.ps-container>.ps-scrollbar-y-rail,
-.ps-container>.ps-scrollbar-y-rail>.ps-scrollbar-y{
-	border-radius: 0;
-	width: 1px;
-}
-.ps-container:hover>.ps-scrollbar-y-rail,
-.ps-container>.ps-scrollbar-y-rail{
-	opacity: 1;
-	background: rgba(255,255,255,0.2);
-}
-.ps-container>.ps-scrollbar-y-rail>.ps-scrollbar-y{
-	background: white;
 }

@@ -33,7 +33,7 @@
     "mustache": "^2.0.0",
     "nanoscroller": "^0.8.7",
     "perfect-scrollbar": "^0.6.4",
-    "swiper": "^3.0.7"
+    "swiper": "^3.1.2"
   },
   "scripts": {
     "dev": "gulp",
