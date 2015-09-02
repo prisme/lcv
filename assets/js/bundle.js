@@ -657,9 +657,13 @@ function instance() {
         .success(function(items){
             console.log(items)
             
-            // Prep data
+            // Prep data, template specifics
+            // ex: if (ctx.params.list == 'spectacles')
             items.forEach(function(e,i){
-                e.date = e.date.split('-')[0]
+                if(e.hasOwnProperty('date')){
+                    e.date = e.date.split('-')[0]
+                }
+                
                 e.root = rootPath +'/'+ ctx.params.list
             })
 
@@ -832,8 +836,6 @@ function addHandlers(){
 
 		if( !elts.length )
 			elts = rootEl.querySelectorAll('.section *')
-
-		console.log(elts)
 
 		return elts
 	}

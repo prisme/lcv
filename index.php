@@ -61,7 +61,7 @@
 		<g><path fill-rule="evenodd" fill="#FFFFFF" d="M0 0h31v1H0V0z"/><path fill-rule="evenodd" fill="#FFFFFF" d="M0 7h31v1H0V7z"/><path fill-rule="evenodd" fill="#FFFFFF" d="M0 14h31v1H0V14z"/></g></svg>
 	</div>
 
-	<a href="<?=$_ROOT?>" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
+	<a href="<?=$_ROOT?>/" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
 
 	<div class="nav">
 		<a href="<?=$_ROOT?>/">home</a>

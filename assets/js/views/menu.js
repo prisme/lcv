@@ -60,8 +60,6 @@ function addHandlers(){
 		if( !elts.length )
 			elts = rootEl.querySelectorAll('.section *')
 
-		console.log(elts)
-
 		return elts
 	}
 }
