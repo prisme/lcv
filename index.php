@@ -61,10 +61,10 @@
 			<li>
 				<a href="#" class="sub-prompt">les comediens voyageurs</a>
 				<ul class="menu-sub">
-					<li><a href="<?=$_ROOT?>">marcel bozonet</a></li>
-					<li><a href="<?=$_ROOT?>">edito</a></li>
-					<li><a href="<?=$_ROOT?>">l'équipe</a></li>
-					<li><a href="<?=$_ROOT?>">partenaires</a></li>
+					<li><a href="<?=$_ROOT?>/lcv/marcel-bozonnet">marcel bozonet</a></li>
+					<li><a href="<?=$_ROOT?>/lcv/edito">edito</a></li>
+					<li><a href="<?=$_ROOT?>/lcv/equipe">l'équipe</a></li>
+					<li><a href="<?=$_ROOT?>/lcv/partenaires">partenaires</a></li>
 				</ul>
 			</li>
 			<li><a href="<?=$_ROOT?>/spectacles">spectacles</a></li>

@@ -31,7 +31,7 @@ exports.init = function(ROOT) {
 
         // @todo : switch should be replaced by if indexOf in routes array…
         switch(ctx.params.list){ 
-            case 'ateliers' : case 'spectacles' : 
+            case 'ateliers' : case 'spectacles' : case 'lcv' : 
                 if( typeof ctx.params.item !== 'undefined'){
                     instance = item
                 }
