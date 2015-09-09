@@ -22,34 +22,34 @@ var data, content
 
 // 1. triggered from router.js
 exports.enter = function (ctx){
-    if (content) {
-        ready(ctx)
-        return
-    }
-    loadData(ctx)
+  if (content) {
+    ready(ctx)
+    return
+  }
+  loadData(ctx)
 }
 
 // 2. Load data
 function loadData(ctx){
-    state = 'loading'
+  state = 'loading'
     
-    if (data || ctx.state.static){
-        compileTemplate(ctx) 
-        return
-    }
+  if (data || ctx.state.static){
+    compileTemplate(ctx) 
+    return
+  }
 
-    Cockpit.request('/collections/get/spectacles').success(function(items){
+  Cockpit.request('/collections/get/spectacles').success(function(items){
 
-      var featured = _.filter(items, function(item){ return item.featured == true })
-      featured = _.sortBy(featured, 'featuredPosition')
-      items = featured.concat(items)
-      data = items.slice(0,3) 
+    var featured = _.filter(items, function(item){ return item.featured == true })
+    featured = _.sortBy(featured, 'featuredPosition')
+    items = featured.concat(items)
+    data = items.slice(0,3) 
 
-      console.log(data)
+    console.log(data)
 
-      /* media manager */
-      var imgs = items.map(function(item){ return item.visuel })
-      Cockpit
+    /* media manager */
+    var imgs = items.map(function(item){ return item.visuel })
+    Cockpit
       .request('/mediamanager/thumbnails', {
         images: imgs,
         w: 1920, h: 1080,
@@ -70,27 +70,27 @@ function loadData(ctx){
         if (state !== 'loading') return
         compileTemplate(data)
       })
-    })
+  })
 }
 
 // 3. Compile a DOM element from the template and data
 function compileTemplate(ctx) {
 
-    data = data || ctx.state.static // !!!
+  data = data || ctx.state.static // !!!
 
-    // var html = template({items: data})
-    var html = template({items : data})
-    content = parseHTML(html)
-    ready(ctx)
+  // var html = template({items: data})
+  var html = template({items : data})
+  content = parseHTML(html)
+  ready(ctx)
 }
 
 // 4. Content is ready to be shown
 function ready(ctx) {
-    state = 'ready'
+  state = 'ready'
 
-    rootEl.appendChild(content)
+  rootEl.appendChild(content)
 
-    var homeSwiper = new swiper('.swiper-container', {
+  var homeSwiper = new swiper('.swiper-container', {
       speed: 1200,
       autoplay: 5000,
       effect: 'fade',
@@ -105,72 +105,70 @@ function ready(ctx) {
       keyboardControl: true
     })  
 
-    pubsub.on('menu:open', homeSwiper.stopAutoplay)
-    pubsub.on('menu:close', homeSwiper.startAutoplay)
+  pubsub.on('menu:open', homeSwiper.stopAutoplay)
+  pubsub.on('menu:close', homeSwiper.startAutoplay)
 
-    animateIn()
+  animateIn()
     
-    // For resize:
-    //     either force a global resize from common.js
-    // pubsub.emit('global-resize')
+  // For resize:
+  //     either force a global resize from common.js
+  // pubsub.emit('global-resize')
 
-    //     or just keep it local
-    // resize(window.innerWidth, window.innerHeight)
+  //     or just keep it local
+  // resize(window.innerWidth, window.innerHeight)
 }
 
 // 5. Final step, animate in page
 function animateIn() {
-    TweenLite.to(content, 0.5, {
-        autoAlpha: 1, 
-        onComplete: function() {
-
-            // End of animation
-            state = 'on'
-        }
-    })
   // bugfix
   var hidden = content.querySelectorAll('.menu-hide')
   TweenLite.set(hidden, { autoAlpha: 1})
+
+  TweenLite.to(content, 0.5, {
+    autoAlpha: 1, 
+    onComplete: function() {
+
+      // End of animation
+      state = 'on'
+    }
+  })
 }
 
 // Triggered from router.js
 exports.exit = function (ctx, next){
   
-    // If user requests to leave before content loaded
-    if (state == 'off' || state == 'loading') {
-        console.log('left before loaded')
-        next()
-        return
-    }
-    if (state == 'ready') console.log('still animating on quit')
+  // If user requests to leave before content loaded
+  if (state == 'off' || state == 'loading') {
+    console.log('left before loaded')
+    next()
+    return
+  }
+  if (state == 'ready') console.log('still animating on quit')
 
-    state = 'leaving'
+  state = 'leaving'
     
-    animateOut(next)
+  animateOut(next)
 
-    // Let next view start loading
-    // next()
+  // Let next view start loading
+  // next()
 }
 
 function animateOut(next) {
-    TweenLite.to(content, 0.5, {
-        autoAlpha: 0, 
-        onComplete: function() {
-            content.parentNode.removeChild(content)
+  TweenLite.to(content, 0.5, {
+    autoAlpha: 0, 
+    onComplete: function() {
+      content.parentNode.removeChild(content)
 
-            // End of animation
-            state = 'off'
+      // End of animation
+      state = 'off'
 
-            // Let next view start loading
-            next()
-        }
-    })
+      // Let next view start loading
+      next()
+    }
+  })
 }
 
 // Listen to global resizes
 pubsub.on('resize', resize)
 function resize(_width, _height) { 
 }
-
-
-

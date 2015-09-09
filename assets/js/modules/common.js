@@ -4,7 +4,7 @@ var gsap = require('gsap')
 
 // Global resize
 function resize() {
-    pubsub.emit('resize', window.innerWidth, window.innerHeight)
+  pubsub.emit('resize', window.innerWidth, window.innerHeight)
 }
 
 // Only native resize listener on site
@@ -18,11 +18,3 @@ var rootEl = document.body.parentNode
 
 window.LCV = {}
 LCV.isTouch = rootEl.classList.contains('touch');
-
-
-
-
-
-var debug = false;
-if(debug) 
-	document.body.classList.add('debug')

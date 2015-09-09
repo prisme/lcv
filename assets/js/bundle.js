@@ -13,7 +13,7 @@ var gsap = require('gsap')
 
 // Global resize
 function resize() {
-    pubsub.emit('resize', window.innerWidth, window.innerHeight)
+  pubsub.emit('resize', window.innerWidth, window.innerHeight)
 }
 
 // Only native resize listener on site
@@ -28,13 +28,6 @@ var rootEl = document.body.parentNode
 window.LCV = {}
 LCV.isTouch = rootEl.classList.contains('touch');
 
-
-
-
-
-var debug = false;
-if(debug) 
-	document.body.classList.add('debug')
 },{"gsap":34,"pubsub":4}],3:[function(require,module,exports){
 /*
  *
@@ -472,149 +465,149 @@ var Ps = require('perfect-scrollbar');
 var template = require('item.hbs');
 
 function instance() {
-    var _this = this;
+  var _this = this;
 
-    // var dataUrl = 'assets/data/test.json';
+  // var dataUrl = 'assets/data/test.json';
 
-    // Current state of module
-    // Can also be 'loading', 'ready', 'on' and 'leaving'
-    // 'off' = the module is inactive
-    // 'loading' = the data is loading, nothing is shown
-    // 'ready' = the content is ready, but still animating or preloading files
-    // 'on' = all animated and preloaded
-    // 'leaving' = exit has been called, animating out
-    var state = 'off';
+  // Current state of module
+  // Can also be 'loading', 'ready', 'on' and 'leaving'
+  // 'off' = the module is inactive
+  // 'loading' = the data is loading, nothing is shown
+  // 'ready' = the content is ready, but still animating or preloading files
+  // 'on' = all animated and preloaded
+  // 'leaving' = exit has been called, animating out
+  var state = 'off';
 
-    var data, content, container;
+  var data, content, container;
 
-    // 1. triggered from router.js
-    _this.enter = function (ctx){
-        loadData(ctx);
-    };
+  // 1. triggered from router.js
+  _this.enter = function (ctx){
+    loadData(ctx);
+  };
 
-    // 2. Load data
-    function loadData(ctx){
-        state = 'loading';
+  // 2. Load data
+  function loadData(ctx){
+    state = 'loading';
 
-        if (data || ctx.state.instance){
-            compileTemplate(ctx); 
-            return;
-        }
+    if (data || ctx.state.instance){
+      compileTemplate(ctx); 
+      return;
+    }
         
-        Cockpit
-        .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
+    Cockpit
+    .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
         .success(function(items){
-            console.log(items)
-            data = items;
+          console.log(items)
+          data = items;
 
-            /* media manager */
-            var imgs = items.map(function(item){ return item.visuel })
-            Cockpit
+          /* media manager */
+          var imgs = items.map(function(item){ return item.visuel })
+          Cockpit
             .request('/mediamanager/thumbnails', {
-                images: imgs,
-                w: 1920, h: 1080,
-                options: { quality : 60, mode : 'best_fit' }
+              images: imgs,
+              w: 1920, h: 1080,
+              options: { quality : 60, mode : 'best_fit' }
             })
             .success(function(items){
 
-                // transmute object containing urls to array
-                items = Object.keys(items).map(function (key) {return items[key]});
-                // replace data.visuel props with actual urls
-                data.forEach(function(d,i){ d.visuel = items[i] })
+              // transmute object containing urls to array
+              items = Object.keys(items).map(function (key) {return items[key]});
+              // replace data.visuel props with actual urls
+              data.forEach(function(d,i){ d.visuel = items[i] })
 
-                // Cache data
-                ctx.state.instance = data;
-                ctx.save();
+              // Cache data
+              ctx.state.instance = data;
+              ctx.save();
 
-                // if state changed while loading cancel
-                if (state !== 'loading') return;
-                compileTemplate(data);
+              // if state changed while loading cancel
+              if (state !== 'loading') return;
+              compileTemplate(data);
             });
 
         });
         
-    }
+  }
 
-    // 3. Compile a DOM element from the template and data
-    function compileTemplate(ctx) {
-        data = data || ctx.state.instance // !!!
+  // 3. Compile a DOM element from the template and data
+  function compileTemplate(ctx) {
+    data = data || ctx.state.instance // !!!
 
-        var html = template({item: data});
-        content = parseHTML(html);
-        ready(ctx);
-    }
+    var html = template({item: data});
+    content = parseHTML(html);
+    ready(ctx);
+  }
 
-    // 4. Content is ready to be shown
-    function ready(ctx) {
-        state = 'ready';
+  // 4. Content is ready to be shown
+  function ready(ctx) {
+    state = 'ready';
 
-        TweenLite.set(content, {autoAlpha: 0});
-        rootEl.appendChild(content);
+    TweenLite.set(content, {autoAlpha: 0});
+    rootEl.appendChild(content);
 
-        container = document.querySelector('.item .wrap');
-        Ps.initialize(container);
+    container = document.querySelector('.item .wrap');
+    Ps.initialize(container);
 
-        setTimeout(function(){
-            var img = document.querySelector('.visual')
-            content.style.backgroundImage = 'url(' + img.src + ')'
-        }, 0)
+    setTimeout(function(){
+      var img = document.querySelector('.visual')
+      content.style.backgroundImage = 'url(' + img.src + ')'
+    }, 0)
         
-        animateIn();
+    animateIn();
+  }
+
+  // 5. Final step, animate in page
+  function animateIn() {
+    TweenLite.to(content, 0.7, {
+      autoAlpha: 1,
+      ease: Power1.easeIn, 
+      onComplete: function() {
+        // End of animation
+        state = 'on';
+      }
+    });
+  }
+
+  // Triggered from router.js
+  _this.exit = function (ctx, next){
+
+    // If user requests to leave before content loaded
+    if (state == 'off' || state == 'loading') {
+      console.info('left before loaded');
+      next();
+      return;
     }
+    if (state == 'ready') console.info('still animating on quit');
 
-    // 5. Final step, animate in page
-    function animateIn() {
-        TweenLite.to(content, 0.7, {
-            autoAlpha: 1,
-            ease: Power1.easeIn, 
-            onComplete: function() {
-                // End of animation
-                state = 'on';
-            }
-        });
-    }
+    state = 'leaving';
 
-    // Triggered from router.js
-    _this.exit = function (ctx, next){
-
-        // If user requests to leave before content loaded
-        if (state == 'off' || state == 'loading') {
-            console.info('left before loaded');
-            next();
-            return;
-        }
-        if (state == 'ready') console.info('still animating on quit');
-
-        state = 'leaving';
-
-        // Remove instance of self from ctx
-        delete ctx.instance;
+    // Remove instance of self from ctx
+    delete ctx.instance;
         
-        animateOut(next);
-    };
+    animateOut(next);
+  };
 
-    function animateOut(next) {
-        TweenLite.to(content, 0.5, {
-            autoAlpha: 0, 
-            ease: Power1.easeOut, 
-            onComplete: function() {
-                Ps.destroy(container);
-                content.parentNode.removeChild(content);
+  function animateOut(next) {
+    TweenLite.to(content, 0.5, {
+      autoAlpha: 0, 
+      ease: Power1.easeOut, 
+      onComplete: function() {
+        Ps.destroy(container);
+        content.parentNode.removeChild(content);
 
-                // End of animation
-                state = 'off';
+        // End of animation
+        state = 'off';
 
-                // Let next view start loading
-                next();
-            }
-        });
-    }
+        // Let next view start loading
+        next();
+      }
+    });
+  }
 
-    // Listen to global resizes
-    pubsub.on('resize', resize);
-    function resize(_width, _height) { 
-        Ps.update(container);
-    }
+  // Listen to global resizes
+  pubsub.on('resize', resize);
+  function resize(_width, _height) { 
+    Ps.update(container);
+  }
 
 }
 
@@ -632,151 +625,151 @@ var Ps = require('perfect-scrollbar');
 var template = require('list.hbs');
 
 function instance() {
-    var _this = this;
+  var _this = this;
 
-    // Current state of module :
-    // 'off' = the module is inactive
-    // 'loading' = the data is loading, nothing is shown
-    // 'ready' = the content is ready, but still animating or preloading files
-    // 'on' = all animated and preloaded
-    // 'leaving' = exit has been called, animating out
-    var state = 'off';
+  // Current state of module :
+  // 'off' = the module is inactive
+  // 'loading' = the data is loading, nothing is shown
+  // 'ready' = the content is ready, but still animating or preloading files
+  // 'on' = all animated and preloaded
+  // 'leaving' = exit has been called, animating out
+  var state = 'off';
 
-    var data, content, container;
+  var data, content, container;
 
-    // 1. triggered from router.js
-    _this.enter = function (ctx){
-        loadData(ctx);
-    };
+  // 1. triggered from router.js
+  _this.enter = function (ctx){
+    loadData(ctx);
+  };
 
-    // 2. Load data
-    function loadData(ctx){
-        state = 'loading';
+  // 2. Load data
+  function loadData(ctx){
+    state = 'loading';
 
-        if (data || ctx.state.instance){
-            compileTemplate(ctx); 
-            return;
-        }
+    if (data || ctx.state.instance){
+      compileTemplate(ctx); 
+      return;
+    }
         
-        Cockpit
-        .request('/collections/get/'+ctx.params.list)
+    Cockpit
+    .request('/collections/get/'+ctx.params.list)
         .success(function(items){
-            console.log(items)
+          console.log(items)
             
-            // Prep data, template specifics
-            // ex: if (ctx.params.list == 'spectacles')
-            items.forEach(function(e,i){
-                if(e.hasOwnProperty('date')){
-                    e.date = e.date.split('-')[0]
-                }
+          // Prep data, template specifics
+          // ex: if (ctx.params.list == 'spectacles')
+          items.forEach(function(e,i){
+            if(e.hasOwnProperty('date')){
+              e.date = e.date.split('-')[0]
+            }
                 
-                e.root = rootPath +'/'+ ctx.params.list
-            })
+            e.root = rootPath +'/'+ ctx.params.list
+          })
 
-            data = items;
+          data = items;
             
-            // Media manager 
-            var imgs = items.map(function(item){ return item.visuel })
-            Cockpit
+          // Media manager 
+          var imgs = items.map(function(item){ return item.visuel })
+          Cockpit
             .request('/mediamanager/thumbnails', {
-                images: imgs,
-                w: 1920, h: 1080,
-                options: { quality : 70, mode : 'best_fit' }
+              images: imgs,
+              w: 1920, h: 1080,
+              options: { quality : 70, mode : 'best_fit' }
             })
             .success(function(items){
-                // transmute object containing urls to array
-                items = Object.keys(items).map(function (key) {return items[key]});
-                // replace data.visuel props with actual urls
-                data.forEach(function(d,i){ d.visuel = items[i] })
+              // transmute object containing urls to array
+              items = Object.keys(items).map(function (key) {return items[key]});
+              // replace data.visuel props with actual urls
+              data.forEach(function(d,i){ d.visuel = items[i] })
 
-                // Cache data
-                ctx.state.instance = data;
-                ctx.save();
+              // Cache data
+              ctx.state.instance = data;
+              ctx.save();
 
-                // if state changed while loading cancel
-                if (state !== 'loading') return;
-                compileTemplate(data);
+              // if state changed while loading cancel
+              if (state !== 'loading') return;
+              compileTemplate(data);
             });
             
         });
         
+  }
+
+  // 3. Compile a DOM element from the template and data
+  function compileTemplate(ctx) {
+    data = data || ctx.state.instance
+
+    var html = template({ list: data })
+    content = parseHTML(html);
+    ready(ctx);
+  }
+
+  // 4. Content is ready to be shown
+  function ready(ctx) {
+    state = 'ready';
+    TweenLite.set(content, {autoAlpha: 0});
+    rootEl.appendChild(content);
+
+
+    container = document.querySelector('.section.list .items');
+    Ps.initialize(container);
+
+    animateIn();
+  }
+
+  // 5. Final step, animate in page
+  function animateIn() {
+    TweenLite.to(content, 0.7, {
+      autoAlpha: 1, 
+      ease: Power1.easeIn, 
+      onComplete: function() {
+        // End of animation
+        state = 'on';
+      }
+    });
+  }
+
+  // Triggered from router.js
+  _this.exit = function (ctx, next){
+
+    // If user requests to leave before content loaded
+    if (state == 'off' || state == 'loading') {
+      console.info('left before loaded');
+      next();
+      return;
     }
+    if (state == 'ready') console.info('still animating on quit');
 
-    // 3. Compile a DOM element from the template and data
-    function compileTemplate(ctx) {
-        data = data || ctx.state.instance
+    state = 'leaving';
 
-        var html = template({ list: data })
-        content = parseHTML(html);
-        ready(ctx);
-    }
-
-    // 4. Content is ready to be shown
-    function ready(ctx) {
-        state = 'ready';
-        TweenLite.set(content, {autoAlpha: 0});
-        rootEl.appendChild(content);
-
-
-        container = document.querySelector('.section.list .items');
-        Ps.initialize(container);
-
-        animateIn();
-    }
-
-    // 5. Final step, animate in page
-    function animateIn() {
-        TweenLite.to(content, 0.7, {
-            autoAlpha: 1, 
-            ease: Power1.easeIn, 
-            onComplete: function() {
-                // End of animation
-                state = 'on';
-            }
-        });
-    }
-
-    // Triggered from router.js
-    _this.exit = function (ctx, next){
-
-        // If user requests to leave before content loaded
-        if (state == 'off' || state == 'loading') {
-            console.info('left before loaded');
-            next();
-            return;
-        }
-        if (state == 'ready') console.info('still animating on quit');
-
-        state = 'leaving';
-
-        // Remove instance of self from ctx
-        delete ctx.instance;
+    // Remove instance of self from ctx
+    delete ctx.instance;
         
-        animateOut(next);
-    };
+    animateOut(next);
+  };
 
-    function animateOut(next) {
-        TweenLite.to(content, 0.5, {
-            autoAlpha: 0, 
-            ease: Power1.easeOut, 
-            onComplete: function() {
-                Ps.destroy(container);
-                content.parentNode.removeChild(content);
+  function animateOut(next) {
+    TweenLite.to(content, 0.5, {
+      autoAlpha: 0, 
+      ease: Power1.easeOut, 
+      onComplete: function() {
+        Ps.destroy(container);
+        content.parentNode.removeChild(content);
 
-                // End of animation
-                state = 'off';
+        // End of animation
+        state = 'off';
 
-                // Let next view start loading
-                next();
-            }
-        });
-    }
+        // Let next view start loading
+        next();
+      }
+    });
+  }
 
-    // Listen to global resizes
-    pubsub.on('resize', resize);
-    function resize(_width, _height) { 
-        Ps.update(container);
-    }
+  // Listen to global resizes
+  pubsub.on('resize', resize);
+  function resize(_width, _height) { 
+    Ps.update(container);
+  }
 
 }
 
@@ -788,74 +781,74 @@ var classList = require('dom-classlist')
 var _component, _openPrompt, _closePrompt, _logo, _links, _hidden
 
 exports.init = function() {
-    ready()
-    addHandlers()
+  ready()
+  addHandlers()
 }
 
 function ready(){
-	_component = document.querySelector('.menu')
-	_openPrompt = document.querySelector('.menu-prompt')
-	_closePrompt = document.querySelector('.menu .close')
-	_logo =  document.querySelector('.logo')
-	_links = _component.querySelectorAll('a:not([class="sub-prompt"])')
-	_subPrompt = _component.querySelectorAll('a.sub-prompt')
-	_hidden = null
+  _component = document.querySelector('.menu')
+  _openPrompt = document.querySelector('.menu-prompt')
+  _closePrompt = document.querySelector('.menu .close')
+  _logo =  document.querySelector('.logo')
+  _links = _component.querySelectorAll('a:not([class="sub-prompt"])')
+  _subPrompt = _component.querySelectorAll('a.sub-prompt')
+  _hidden = null
 
-	_closePrompt.dataset.preventDefault = true
+  _closePrompt.dataset.preventDefault = true
 
-	TweenLite.set(_component, {autoAlpha:0})
+  TweenLite.set(_component, {autoAlpha:0})
 }
 
 function addHandlers(){
-	var eventName = LCV.isTouch ? 'touchend' : 'click'
+  var eventName = LCV.isTouch ? 'touchend' : 'click'
 
-	_openPrompt.addEventListener(eventName, show)
-	_closePrompt.addEventListener(eventName, hide)
+  _openPrompt.addEventListener(eventName, show)
+  _closePrompt.addEventListener(eventName, hide)
 
-	// hide menu when switching page
-	for (var i = 0; i < _links.length; i++) {
-		_links[i].addEventListener('click', hide)
-	}
+  // hide menu when switching page
+  for (var i = 0; i < _links.length; i++) {
+    _links[i].addEventListener('click', hide)
+  }
 
-	// toggle submenu
-	for (var i = 0; i < _subPrompt.length; i++) {
-		_subPrompt[i].addEventListener('click', function(e){
-			classList(e.target.parentNode).toggle('active')
-			e.preventDefault()
-		})
-	}
+  // toggle submenu
+  for (var i = 0; i < _subPrompt.length; i++) {
+    _subPrompt[i].addEventListener('click', function(e){
+      classList(e.target.parentNode).toggle('active')
+      e.preventDefault()
+    })
+  }
 }
 
 function show(){
-	// set once : menu has to be shown before it can be hidden
-	_hidden = hiddenElements() 
+  // set once : menu has to be shown before it can be hidden
+  _hidden = hiddenElements() 
 	
-	TweenLite.to(_component, 0.5, { autoAlpha: 1})
-	TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 0})
-	TweenLite.to(_hidden, 0.1, { autoAlpha: 0})
+  TweenLite.to(_component, 0.5, { autoAlpha: 1})
+  TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 0})
+  TweenLite.to(_hidden, 0.1, { autoAlpha: 0})
 
-	pubsub.emit('menu:open')
+  pubsub.emit('menu:open')
 }
 
 function hide(e){
-	if( !!e.target.dataset.preventDefault ){
-		e.preventDefault()
-		TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
-	}
+  if( !!e.target.dataset.preventDefault ){
+    e.preventDefault()
+    TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
+  }
 	
-	TweenLite.to(_component, 0.5, { autoAlpha: 0})
-	TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
+  TweenLite.to(_component, 0.5, { autoAlpha: 0})
+  TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
 
-	pubsub.emit('menu:close')
+  pubsub.emit('menu:close')
 }
 
 function hiddenElements(){		
-	var elts = rootEl.querySelectorAll('.section .menu-hide')
+  var elts = rootEl.querySelectorAll('.section .menu-hide')
 
-	if( !elts.length )
-		elts = rootEl.querySelectorAll('.section *')
+  if( !elts.length )
+  elts = rootEl.querySelectorAll('.section *')
 
-	return elts
+  return elts
 }
 },{"dom-classlist":33,"gsap":34,"pubsub":4}],10:[function(require,module,exports){
 
