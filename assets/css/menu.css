@@ -1,0 +1,115 @@
+.menu .logo{
+	left: 50%; transform: translateX(-50%);
+}
+
+.menu-prompt{
+	position: absolute;
+	cursor: pointer;
+	z-index: 1;
+	top: 50px;
+	left: 100px;
+}
+
+.menu{
+	opacity: 0;
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	color: white;
+	font-family: 'PlutoCondBold';
+	text-align: center;
+	z-index: 1;
+	text-transform: uppercase;
+}
+
+.menu > ul{
+	position: absolute;
+	top: 50%; left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.menu-sub{
+	position: relative;
+	font-family: 'PlutoCondLight';
+	overflow: hidden; 
+	
+	height: 0; 
+	will-change: height;
+	transition: height 0.3s ease-in;
+}
+.menu .menu-sub li{ 
+	font-size: 14px;
+}
+
+.menu .active .sub-prompt{
+	color: var(--redColor);
+}
+
+.menu .active .menu-sub{
+	height: 180px;
+	transition: height 0.3s ease-out;
+}
+.menu .menu-sub li:first-child{ 
+	padding-top: 20px;
+}
+.menu .menu-sub li:last-child{ 
+	padding-bottom: 20px;
+}
+
+.menu-sub:before,
+.menu-sub:after{
+	content: "•";
+	display: block;
+	position: absolute;
+	left: 50%; 
+	font-size: .8em;
+	height: .8em;
+	
+	opacity:0;
+	will-change: opacity;
+	transition: opacity 0.1s 0s ease-in;
+}
+.menu .active .menu-sub:before,
+.menu .active .menu-sub:after{
+	opacity: 1;
+	transition: opacity 0.3s 0.2s ease-in;
+}
+.menu-sub:before{
+	top: -10px;
+}
+.menu-sub:after{
+	bottom: 15px;
+}
+
+.menu .home{
+	width: 16px;
+	height: 16px;
+	border: 1px solid white;
+	position: absolute;
+	top: -40px; 
+	left: 50%; transform: translateX(-50%);
+}
+
+.menu .close{
+	position: absolute;
+	bottom: -40px; 
+	left: 50%; transform: translateX(-50%);
+	width: 17px; height: 17px;
+	background: url(../img/icn-close.png) no-repeat;
+}
+
+.menu .home,
+.menu .close{
+	text-indent: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.menu li{
+	font-size: 18px;
+	line-height: 2.5;
+}
+
+.menu a{
+	color: white;
+	text-decoration: none;
+}

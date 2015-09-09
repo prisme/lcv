@@ -13,29 +13,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Les Comédiens Voyageurs</title>
 	<meta charset="utf-8" />
+	<title>Les Comédiens Voyageurs</title>
+	<meta name="description" content="" />
 	<meta name="google" value="notranslate" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<meta name="description" content="" />
-	<meta name="keywords" content="" />
-
-	<meta name="author" content="" />
-	<meta name="copyright" content="" />
-	<meta name="application-name" content="" />
+	<meta name="author" content="@prisme" />
+	<meta name="copyright" content="Les Comédiens Voyageurs" />
 	      
-	<meta property="og:title" content="" />
-	<meta property="og:type" content="" />
+	<meta property="og:title" content="Les Comédiens Voyageurs" />
+	<meta property="og:type" content="website" />
 	<meta property="og:image" content="" />
-	<meta property="og:url" content="" />
 	<meta property="og:description" content="" />
-
-	<meta name="twitter:card" content="">
-	<meta name="twitter:creator" content="">
-	<meta name="twitter:title" content="">
-	<meta name="twitter:description" content="">
-	<meta name="twitter:image:src" content="">
 
 	<link rel="icon" href="assets/img/favicon.ico" />
 
@@ -62,21 +52,21 @@
 	</div>
 
 	<a href="<?=$_ROOT?>/" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
-
-	<div class="nav">
-		<a href="<?=$_ROOT?>/">home</a>
-		<a href="<?=$_ROOT?>/spectacles/">spectacles</a>
-		<a href="<?=$_ROOT?>/spectacles/en-attendant-godot">spectacles/en-attendant-godot</a>
-		<a href="<?=$_ROOT?>/ateliers/">ateliers</a>
-		<a href="<?=$_ROOT?>/404/">404</a> 
-	</div>
 	
 	<!-- todo : region -->
 	<div class="menu">
 		<a href="<?=$_ROOT?>" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
 		<ul>
 			<li><a href="<?=$_ROOT?>" class="home">close</a></li>
-			<li><a href="<?=$_ROOT?>/les-comediens-voyageurs">les comediens voyageurs</a></li>
+			<li>
+				<a href="#" class="sub-prompt">les comediens voyageurs</a>
+				<ul class="menu-sub">
+					<li><a href="<?=$_ROOT?>">marcel bozonet</a></li>
+					<li><a href="<?=$_ROOT?>">edito</a></li>
+					<li><a href="<?=$_ROOT?>">l'équipe</a></li>
+					<li><a href="<?=$_ROOT?>">partenaires</a></li>
+				</ul>
+			</li>
 			<li><a href="<?=$_ROOT?>/spectacles">spectacles</a></li>
 			<li><a href="<?=$_ROOT?>/ateliers">ateliers</a></li>
 			<li><a href="<?=$_ROOT?>/presse">presse</a></li>

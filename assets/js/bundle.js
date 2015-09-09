@@ -35,7 +35,7 @@ LCV.isTouch = rootEl.classList.contains('touch');
 var debug = false;
 if(debug) 
 	document.body.classList.add('debug')
-},{"gsap":33,"pubsub":4}],3:[function(require,module,exports){
+},{"gsap":34,"pubsub":4}],3:[function(require,module,exports){
 /*
  *
  * Turns an HTML string into a DOM element (only first element returned)
@@ -282,7 +282,7 @@ exports.init = function(ROOT) {
     // init globals
     menu.init();
 };
-},{"home":6,"item":7,"list":8,"menu":9,"page":55}],6:[function(require,module,exports){
+},{"home":6,"item":7,"list":8,"menu":9,"page":56}],6:[function(require,module,exports){
 // Use static template for 'one of a kind' pages like home
 // Is never destroyed
 var gsap = require('gsap')
@@ -307,34 +307,34 @@ var data, content
 
 // 1. triggered from router.js
 exports.enter = function (ctx){
-    if (content) {
-        ready(ctx)
-        return
-    }
-    loadData(ctx)
+  if (content) {
+    ready(ctx)
+    return
+  }
+  loadData(ctx)
 }
 
 // 2. Load data
 function loadData(ctx){
-    state = 'loading'
+  state = 'loading'
     
-    if (data || ctx.state.static){
-        compileTemplate(ctx) 
-        return
-    }
+  if (data || ctx.state.static){
+    compileTemplate(ctx) 
+    return
+  }
 
-    Cockpit.request('/collections/get/spectacles').success(function(items){
+  Cockpit.request('/collections/get/spectacles').success(function(items){
 
-      var featured = _.filter(items, function(item){ return item.featured == true })
-      featured = _.sortBy(featured, 'featuredPosition')
-      items = featured.concat(items)
-      data = items.slice(0,3) 
+    var featured = _.filter(items, function(item){ return item.featured == true })
+    featured = _.sortBy(featured, 'featuredPosition')
+    items = featured.concat(items)
+    data = items.slice(0,3) 
 
-      console.log(data)
+    console.log(data)
 
-      /* media manager */
-      var imgs = items.map(function(item){ return item.visuel })
-      Cockpit
+    /* media manager */
+    var imgs = items.map(function(item){ return item.visuel })
+    Cockpit
       .request('/mediamanager/thumbnails', {
         images: imgs,
         w: 1920, h: 1080,
@@ -355,27 +355,27 @@ function loadData(ctx){
         if (state !== 'loading') return
         compileTemplate(data)
       })
-    })
+  })
 }
 
 // 3. Compile a DOM element from the template and data
 function compileTemplate(ctx) {
 
-    data = data || ctx.state.static // !!!
+  data = data || ctx.state.static // !!!
 
-    // var html = template({items: data})
-    var html = template({items : data})
-    content = parseHTML(html)
-    ready(ctx)
+  // var html = template({items: data})
+  var html = template({items : data})
+  content = parseHTML(html)
+  ready(ctx)
 }
 
 // 4. Content is ready to be shown
 function ready(ctx) {
-    state = 'ready'
+  state = 'ready'
 
-    rootEl.appendChild(content)
+  rootEl.appendChild(content)
 
-    var homeSwiper = new swiper('.swiper-container', {
+  var homeSwiper = new swiper('.swiper-container', {
       speed: 1200,
       autoplay: 5000,
       effect: 'fade',
@@ -390,63 +390,67 @@ function ready(ctx) {
       keyboardControl: true
     })  
 
-    pubsub.on('menu:open', homeSwiper.stopAutoplay)
-    pubsub.on('menu:close', homeSwiper.startAutoplay)
+  pubsub.on('menu:open', homeSwiper.stopAutoplay)
+  pubsub.on('menu:close', homeSwiper.startAutoplay)
 
-    animateIn()
+  animateIn()
     
-    // For resize:
-    //     either force a global resize from common.js
-    // pubsub.emit('global-resize')
+  // For resize:
+  //     either force a global resize from common.js
+  // pubsub.emit('global-resize')
 
-    //     or just keep it local
-    // resize(window.innerWidth, window.innerHeight)
+  //     or just keep it local
+  // resize(window.innerWidth, window.innerHeight)
 }
 
 // 5. Final step, animate in page
 function animateIn() {
-    TweenLite.to(content, 0.5, {
-        autoAlpha: 1, 
-        onComplete: function() {
+  // bugfix
+  var hidden = content.querySelectorAll('.menu-hide')
+  TweenLite.set(hidden, { autoAlpha: 1})
 
-            // End of animation
-            state = 'on'
-        }
-    })
+  TweenLite.to(content, 0.5, {
+    autoAlpha: 1, 
+    onComplete: function() {
+
+      // End of animation
+      state = 'on'
+    }
+  })
 }
 
 // Triggered from router.js
 exports.exit = function (ctx, next){
   
-    // If user requests to leave before content loaded
-    if (state == 'off' || state == 'loading') {
-        console.log('left before loaded')
-        next()
-        return
-    }
-    if (state == 'ready') console.log('still animating on quit')
+  // If user requests to leave before content loaded
+  if (state == 'off' || state == 'loading') {
+    console.log('left before loaded')
+    next()
+    return
+  }
+  if (state == 'ready') console.log('still animating on quit')
 
-    state = 'leaving'
+  state = 'leaving'
     
-    animateOut(next)
+  animateOut(next)
 
-    // Let next view start loading
-    // next()
+  // Let next view start loading
+  // next()
 }
 
 function animateOut(next) {
-    TweenLite.to(content, 0.5, {
-        autoAlpha: 0, 
-        onComplete: function() {
-            content.parentNode.removeChild(content)
+  TweenLite.to(content, 0.5, {
+    autoAlpha: 0, 
+    onComplete: function() {
+      content.parentNode.removeChild(content)
 
-            // End of animation
-            state = 'off'
+      // End of animation
+      state = 'off'
 
-            // Let next view start loading
-            next()
-        }
-    })
+      // Let next view start loading
+      next()
+    }
+  })
 }
 
 // Listen to global resizes
@@ -454,10 +458,7 @@ pubsub.on('resize', resize)
 function resize(_width, _height) { 
 }
 
-
-
-
-},{"gsap":33,"home.hbs":79,"lodash":53,"mustache":54,"parseHTML":3,"pubsub":4,"swiper":78}],7:[function(require,module,exports){
+},{"gsap":34,"home.hbs":80,"lodash":54,"mustache":55,"parseHTML":3,"pubsub":4,"swiper":79}],7:[function(require,module,exports){
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
 module.exports = instance;
@@ -617,7 +618,7 @@ function instance() {
 
 }
 
-},{"gsap":33,"item.hbs":80,"page":55,"parseHTML":3,"perfect-scrollbar":58,"pubsub":4}],8:[function(require,module,exports){
+},{"gsap":34,"item.hbs":81,"page":56,"parseHTML":3,"perfect-scrollbar":59,"pubsub":4}],8:[function(require,module,exports){
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
 module.exports = instance;
@@ -779,9 +780,10 @@ function instance() {
 
 }
 
-},{"gsap":33,"list.hbs":81,"page":55,"parseHTML":3,"perfect-scrollbar":58,"pubsub":4}],9:[function(require,module,exports){
+},{"gsap":34,"list.hbs":82,"page":56,"parseHTML":3,"perfect-scrollbar":59,"pubsub":4}],9:[function(require,module,exports){
 var gsap = require('gsap')
 var pubsub = require('pubsub')
+var classList = require('dom-classlist')
 
 var _component, _openPrompt, _closePrompt, _logo, _links, _hidden
 
@@ -795,10 +797,11 @@ function ready(){
 	_openPrompt = document.querySelector('.menu-prompt')
 	_closePrompt = document.querySelector('.menu .close')
 	_logo =  document.querySelector('.logo')
-	_links = _component.querySelectorAll('a')
+	_links = _component.querySelectorAll('a:not([class="sub-prompt"])')
+	_subPrompt = _component.querySelectorAll('a.sub-prompt')
 	_hidden = null
 
-	_closePrompt.dataset.preventDefault = true;
+	_closePrompt.dataset.preventDefault = true
 
 	TweenLite.set(_component, {autoAlpha:0})
 }
@@ -809,43 +812,52 @@ function addHandlers(){
 	_openPrompt.addEventListener(eventName, show)
 	_closePrompt.addEventListener(eventName, hide)
 
+	// hide menu when switching page
 	for (var i = 0; i < _links.length; i++) {
 		_links[i].addEventListener('click', hide)
-	};
-	
-	function show(){
-		// set once : menu has to be shown before it can be hidden
-		_hidden = hiddenElements() 
-		
-		TweenLite.to(_component, 0.5, { autoAlpha: 1})
-		TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 0})
-		TweenLite.to(_hidden, 0.1, { autoAlpha: 0})
-
-		pubsub.emit('menu:open')
 	}
 
-	function hide(e){
-		if( !!e.target.dataset.preventDefault ){
-			e.preventDefault();
-			TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
-		}
-		
-		TweenLite.to(_component, 0.5, { autoAlpha: 0})
-		TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
-
-		pubsub.emit('menu:close')
-	}
-
-	function hiddenElements(){		
-		var elts = rootEl.querySelectorAll('.section .menu-hide')
-
-		if( !elts.length )
-			elts = rootEl.querySelectorAll('.section *')
-
-		return elts
+	// toggle submenu
+	for (var i = 0; i < _subPrompt.length; i++) {
+		_subPrompt[i].addEventListener('click', function(e){
+			classList(e.target.parentNode).toggle('active')
+			e.preventDefault()
+		})
 	}
 }
-},{"gsap":33,"pubsub":4}],10:[function(require,module,exports){
+
+function show(){
+	// set once : menu has to be shown before it can be hidden
+	_hidden = hiddenElements() 
+	
+	TweenLite.to(_component, 0.5, { autoAlpha: 1})
+	TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 0})
+	TweenLite.to(_hidden, 0.1, { autoAlpha: 0})
+
+	pubsub.emit('menu:open')
+}
+
+function hide(e){
+	if( !!e.target.dataset.preventDefault ){
+		e.preventDefault()
+		TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
+	}
+	
+	TweenLite.to(_component, 0.5, { autoAlpha: 0})
+	TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
+
+	pubsub.emit('menu:close')
+}
+
+function hiddenElements(){		
+	var elts = rootEl.querySelectorAll('.section .menu-hide')
+
+	if( !elts.length )
+		elts = rootEl.querySelectorAll('.section *')
+
+	return elts
+}
+},{"dom-classlist":33,"gsap":34,"pubsub":4}],10:[function(require,module,exports){
 
 },{}],11:[function(require,module,exports){
 arguments[4][10][0].apply(exports,arguments)
@@ -5213,6 +5225,173 @@ function base64DetectIncompleteChar(buffer) {
 }
 
 },{"buffer":12}],33:[function(require,module,exports){
+/**
+ * Module export
+ *
+ * @param {Element} el
+ * @return {ClassList}
+ */
+
+module.exports = function (el) {
+  return new ClassList(el);
+};
+
+/**
+ * Initialize a new ClassList for the given element
+ *
+ * @param {Element} el DOM Element
+ */
+function ClassList(el) {
+  if (!el || el.nodeType !== 1) {
+    throw new Error('A DOM Element reference is required');
+  }
+
+  this.el = el;
+  this.classList = el.classList;
+}
+
+/**
+ * Check token validity
+ *
+ * @param token
+ * @param [method]
+ */
+function checkToken(token, method) {
+  method = method || 'a method';
+
+  if (typeof token != 'string') {
+    throw new TypeError(
+      'Failed to execute \'' + method + '\' on \'ClassList\': ' +
+      'the token provided (\'' + token + '\') is not a string.'
+    );
+  }
+  if (token === "") {
+    throw new SyntaxError(
+      'Failed to execute \'' + method + '\' on \'ClassList\': ' +
+      'the token provided must not be empty.'
+    );
+  }
+  if (/\s/.test(token)) {
+    throw new Error(
+      'Failed to execute \'' + method + '\' on \'ClassList\': ' +
+      'the token provided (\'' + token + '\') contains HTML space ' +
+      'characters, which are not valid in tokens.'
+    );
+  }
+}
+
+/**
+ * Return an array of the class names on the element.
+ *
+ * @return {Array}
+ */
+ClassList.prototype.toArray = function () {
+  var str = (this.el.getAttribute('class') || '').replace(/^\s+|\s+$/g, '');
+  var classes = str.split(/\s+/);
+  if ('' === classes[0]) { classes.shift(); }
+  return classes;
+};
+
+/**
+ * Add the given `token` to the class list if it's not already present.
+ *
+ * @param {String} token
+ */
+ClassList.prototype.add = function (token) {
+  var classes, index, updated;
+  checkToken(token, 'add');
+
+  if (this.classList) {
+    this.classList.add(token);
+  }
+  else {
+    // fallback
+    classes = this.toArray();
+    index = classes.indexOf(token);
+    if (index === -1) {
+      classes.push(token);
+      this.el.setAttribute('class', classes.join(' '));
+    }
+  }
+
+  return;
+};
+
+/**
+ * Check if the given `token` is in the class list.
+ *
+ * @param {String} token
+ * @return {Boolean}
+ */
+ClassList.prototype.contains = function (token) {
+  checkToken(token, 'contains');
+
+  return this.classList ?
+    this.classList.contains(token) :
+    this.toArray().indexOf(token) > -1;
+};
+
+/**
+ * Remove any class names that match the given `token`, when present.
+ *
+ * @param {String|RegExp} token
+ */
+ClassList.prototype.remove = function (token) {
+  var arr, classes, i, index, len;
+
+  if ('[object RegExp]' == Object.prototype.toString.call(token)) {
+    arr = this.toArray();
+    for (i = 0, len = arr.length; i < len; i++) {
+      if (token.test(arr[i])) {
+        this.remove(arr[i]);
+      }
+    }
+  }
+  else {
+    checkToken(token, 'remove');
+
+    if (this.classList) {
+      this.classList.remove(token);
+    }
+    else {
+      // fallback
+      classes = this.toArray();
+      index = classes.indexOf(token);
+      if (index > -1) {
+        classes.splice(index, 1);
+        this.el.setAttribute('class', classes.join(' '));
+      }
+    }
+  }
+
+  return;
+};
+
+/**
+ * Toggle the `token` in the class list. Optionally force state via `force`.
+ *
+ * Native `classList` is not used as some browsers that support `classList` do
+ * not support `force`. Avoiding `classList` altogether keeps this function
+ * simple.
+ *
+ * @param {String} token
+ * @param {Boolean} [force]
+ * @return {Boolean}
+ */
+ClassList.prototype.toggle = function (token, force) {
+  checkToken(token, 'toggle');
+
+  var hasToken = this.contains(token);
+  var method = hasToken ? (force !== true && 'remove') : (force !== false && 'add');
+
+  if (method) {
+    this[method](token);
+  }
+
+  return (typeof force == 'boolean' ? force : !hasToken);
+};
+
+},{}],34:[function(require,module,exports){
 (function (global){
 /*!
  * VERSION: 1.16.1
@@ -12437,7 +12616,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 })((typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window, "TweenMax");
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var Handlebars = require('handlebars');
 var through = require('through');
 
@@ -12465,7 +12644,7 @@ var hbsify = function(file) {
 module.exports = hbsify;
 module.exports.runtime = require('handlebars/runtime')["default"];
 
-},{"handlebars":49,"handlebars/runtime":50,"through":51}],35:[function(require,module,exports){
+},{"handlebars":50,"handlebars/runtime":51,"through":52}],36:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -12503,7 +12682,7 @@ Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":36,"./handlebars/compiler/ast":38,"./handlebars/compiler/base":39,"./handlebars/compiler/compiler":40,"./handlebars/compiler/javascript-compiler":41}],36:[function(require,module,exports){
+},{"./handlebars.runtime":37,"./handlebars/compiler/ast":39,"./handlebars/compiler/base":40,"./handlebars/compiler/compiler":41,"./handlebars/compiler/javascript-compiler":42}],37:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -12536,7 +12715,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":37,"./handlebars/exception":45,"./handlebars/runtime":46,"./handlebars/safe-string":47,"./handlebars/utils":48}],37:[function(require,module,exports){
+},{"./handlebars/base":38,"./handlebars/exception":46,"./handlebars/runtime":47,"./handlebars/safe-string":48,"./handlebars/utils":49}],38:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -12717,7 +12896,7 @@ exports.log = log;var createFrame = function(object) {
   return obj;
 };
 exports.createFrame = createFrame;
-},{"./exception":45,"./utils":48}],38:[function(require,module,exports){
+},{"./exception":46,"./utils":49}],39:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -12945,7 +13124,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":45}],39:[function(require,module,exports){
+},{"../exception":46}],40:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -12961,7 +13140,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"./ast":38,"./parser":42}],40:[function(require,module,exports){
+},{"./ast":39,"./parser":43}],41:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -13431,7 +13610,7 @@ exports.precompile = precompile;function compile(input, options, env) {
 }
 
 exports.compile = compile;
-},{"../exception":45}],41:[function(require,module,exports){
+},{"../exception":46}],42:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -14374,7 +14553,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":37,"../exception":45}],42:[function(require,module,exports){
+},{"../base":38,"../exception":46}],43:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* Jison generated parser */
@@ -14865,7 +15044,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -15004,7 +15183,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":44}],44:[function(require,module,exports){
+},{"./visitor":45}],45:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -15017,7 +15196,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -15046,7 +15225,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -15184,7 +15363,7 @@ exports.program = program;function invokePartial(partial, name, context, helpers
 exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;
-},{"./base":37,"./exception":45,"./utils":48}],47:[function(require,module,exports){
+},{"./base":38,"./exception":46,"./utils":49}],48:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -15196,7 +15375,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -15273,7 +15452,7 @@ exports.escapeExpression = escapeExpression;function isEmpty(value) {
 }
 
 exports.isEmpty = isEmpty;
-},{"./safe-string":47}],49:[function(require,module,exports){
+},{"./safe-string":48}],50:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -15300,12 +15479,12 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":35,"../dist/cjs/handlebars/compiler/printer":43,"../dist/cjs/handlebars/compiler/visitor":44,"fs":10}],50:[function(require,module,exports){
+},{"../dist/cjs/handlebars":36,"../dist/cjs/handlebars/compiler/printer":44,"../dist/cjs/handlebars/compiler/visitor":45,"fs":10}],51:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime');
 
-},{"./dist/cjs/handlebars.runtime":36}],51:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":37}],52:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -15418,7 +15597,7 @@ function through (write, end, opts) {
 
 }).call(this,require('_process'))
 
-},{"_process":19,"stream":31}],52:[function(require,module,exports){
+},{"_process":19,"stream":31}],53:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -24630,7 +24809,7 @@ return jQuery;
 
 }));
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -36986,7 +37165,7 @@ return jQuery;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 /*!
  * mustache.js - Logic-less {{mustache}} templates with JavaScript
  * http://github.com/janl/mustache.js
@@ -37589,7 +37768,7 @@ return jQuery;
 
 }));
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 (function (process){
   /* globals require, module */
 
@@ -38213,7 +38392,7 @@ return jQuery;
 
 }).call(this,require('_process'))
 
-},{"_process":19,"path-to-regexp":56}],56:[function(require,module,exports){
+},{"_process":19,"path-to-regexp":57}],57:[function(require,module,exports){
 var isArray = require('isarray');
 
 /**
@@ -38417,9 +38596,9 @@ function pathToRegexp (path, keys, options) {
   return attachKeys(new RegExp('^' + route, flags(options)), keys);
 }
 
-},{"isarray":57}],57:[function(require,module,exports){
+},{"isarray":58}],58:[function(require,module,exports){
 arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],58:[function(require,module,exports){
+},{"dup":18}],59:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38427,7 +38606,7 @@ arguments[4][18][0].apply(exports,arguments)
 
 module.exports = require('./src/js/main');
 
-},{"./src/js/main":64}],59:[function(require,module,exports){
+},{"./src/js/main":65}],60:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38474,7 +38653,7 @@ exports.list = function (element) {
   }
 };
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38553,7 +38732,7 @@ exports.remove = function (element) {
   }
 };
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38629,7 +38808,7 @@ EventManager.prototype.once = function (element, eventName, handler) {
 
 module.exports = EventManager;
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38647,7 +38826,7 @@ module.exports = (function () {
   };
 })();
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38733,7 +38912,7 @@ exports.env = {
   supportsIePointer: window.navigator.msMaxTouchPoints !== null
 };
 
-},{"./class":59,"./dom":60}],64:[function(require,module,exports){
+},{"./class":60,"./dom":61}],65:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38749,7 +38928,7 @@ module.exports = {
   destroy: destroy
 };
 
-},{"./plugin/destroy":66,"./plugin/initialize":74,"./plugin/update":77}],65:[function(require,module,exports){
+},{"./plugin/destroy":67,"./plugin/initialize":75,"./plugin/update":78}],66:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38770,7 +38949,7 @@ module.exports = {
   stopPropagationOnClick: true
 };
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38797,7 +38976,7 @@ module.exports = function (element) {
   instances.remove(element);
 };
 
-},{"../lib/dom":60,"../lib/helper":63,"./instances":75}],67:[function(require,module,exports){
+},{"../lib/dom":61,"../lib/helper":64,"./instances":76}],68:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38861,7 +39040,7 @@ module.exports = function (element) {
   bindClickRailHandler(element, i);
 };
 
-},{"../../lib/helper":63,"../instances":75,"../update-geometry":76}],68:[function(require,module,exports){
+},{"../../lib/helper":64,"../instances":76,"../update-geometry":77}],69:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -38968,7 +39147,7 @@ module.exports = function (element) {
   bindMouseScrollYHandler(element, i);
 };
 
-},{"../../lib/dom":60,"../../lib/helper":63,"../instances":75,"../update-geometry":76}],69:[function(require,module,exports){
+},{"../../lib/dom":61,"../../lib/helper":64,"../instances":76,"../update-geometry":77}],70:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39088,7 +39267,7 @@ module.exports = function (element) {
   bindKeyboardHandler(element, i);
 };
 
-},{"../../lib/helper":63,"../instances":75,"../update-geometry":76}],70:[function(require,module,exports){
+},{"../../lib/helper":64,"../instances":76,"../update-geometry":77}],71:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39234,7 +39413,7 @@ module.exports = function (element) {
   bindMouseWheelHandler(element, i);
 };
 
-},{"../../lib/helper":63,"../instances":75,"../update-geometry":76}],71:[function(require,module,exports){
+},{"../../lib/helper":64,"../instances":76,"../update-geometry":77}],72:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39254,7 +39433,7 @@ module.exports = function (element) {
   bindNativeScrollHandler(element, i);
 };
 
-},{"../instances":75,"../update-geometry":76}],72:[function(require,module,exports){
+},{"../instances":76,"../update-geometry":77}],73:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39367,7 +39546,7 @@ module.exports = function (element) {
   bindSelectionHandler(element, i);
 };
 
-},{"../../lib/helper":63,"../instances":75,"../update-geometry":76}],73:[function(require,module,exports){
+},{"../../lib/helper":64,"../instances":76,"../update-geometry":77}],74:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39539,7 +39718,7 @@ module.exports = function (element, supportsTouch, supportsIePointer) {
   bindTouchHandler(element, i, supportsTouch, supportsIePointer);
 };
 
-},{"../instances":75,"../update-geometry":76}],74:[function(require,module,exports){
+},{"../instances":76,"../update-geometry":77}],75:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39585,7 +39764,7 @@ module.exports = function (element, userSettings) {
   updateGeometry(element);
 };
 
-},{"../lib/class":59,"../lib/helper":63,"./handler/click-rail":67,"./handler/drag-scrollbar":68,"./handler/keyboard":69,"./handler/mouse-wheel":70,"./handler/native-scroll":71,"./handler/selection":72,"./handler/touch":73,"./instances":75,"./update-geometry":76}],75:[function(require,module,exports){
+},{"../lib/class":60,"../lib/helper":64,"./handler/click-rail":68,"./handler/drag-scrollbar":69,"./handler/keyboard":70,"./handler/mouse-wheel":71,"./handler/native-scroll":72,"./handler/selection":73,"./handler/touch":74,"./instances":76,"./update-geometry":77}],76:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39694,7 +39873,7 @@ exports.get = function (element) {
   return instances[getId(element)];
 };
 
-},{"../lib/dom":60,"../lib/event-manager":61,"../lib/guid":62,"../lib/helper":63,"./default-setting":65}],76:[function(require,module,exports){
+},{"../lib/dom":61,"../lib/event-manager":62,"../lib/guid":63,"../lib/helper":64,"./default-setting":66}],77:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39803,7 +39982,7 @@ module.exports = function (element) {
   cls[i.scrollbarYActive ? 'add' : 'remove'](element, 'ps-active-y');
 };
 
-},{"../lib/class":59,"../lib/dom":60,"../lib/helper":63,"./instances":75}],77:[function(require,module,exports){
+},{"../lib/class":60,"../lib/dom":61,"../lib/helper":64,"./instances":76}],78:[function(require,module,exports){
 /* Copyright (c) 2015 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
@@ -39840,7 +40019,7 @@ module.exports = function (element) {
   d.css(i.scrollbarYRail, 'display', '');
 };
 
-},{"../lib/dom":60,"../lib/helper":63,"./instances":75,"./update-geometry":76}],78:[function(require,module,exports){
+},{"../lib/dom":61,"../lib/helper":64,"./instances":76,"./update-geometry":77}],79:[function(require,module,exports){
 /**
  * Swiper 3.1.2
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -43147,7 +43326,7 @@ module.exports = function (element) {
 
 	return Swiper;
 }));
-},{"jquery":52}],79:[function(require,module,exports){
+},{"jquery":53}],80:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -43195,7 +43374,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":34}],80:[function(require,module,exports){
+},{"hbsify":35}],81:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -43235,7 +43414,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":34}],81:[function(require,module,exports){
+},{"hbsify":35}],82:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -43279,7 +43458,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":34}]},{},[1])
+},{"hbsify":35}]},{},[1])
 
 
 //# sourceMappingURL=bundle.js.map

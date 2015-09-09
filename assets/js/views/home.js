@@ -128,6 +128,9 @@ function animateIn() {
             state = 'on'
         }
     })
+  // bugfix
+  var hidden = content.querySelectorAll('.menu-hide')
+  TweenLite.set(hidden, { autoAlpha: 1})
 }
 
 // Triggered from router.js
