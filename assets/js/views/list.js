@@ -33,12 +33,12 @@ function instance() {
     state = 'loading';
 
     if (data || ctx.state.instance){
-      compileTemplate(ctx); 
+      compileTemplate(data, ctx); 
       return;
     }
         
     Cockpit
-    .request('/collections/get/'+ctx.params.list)
+    .request('/collections/get/'+ctx.params.list, {'sort':{'date':-1}})
         .success(function(items){
           console.log(items)
             
@@ -74,7 +74,7 @@ function instance() {
 
               // if state changed while loading cancel
               if (state !== 'loading') return;
-              compileTemplate(data);
+              compileTemplate(data, ctx);
             });
             
         });
@@ -82,10 +82,10 @@ function instance() {
   }
 
   // 3. Compile a DOM element from the template and data
-  function compileTemplate(ctx) {
+  function compileTemplate(data, ctx) {
     data = data || ctx.state.instance
 
-    var html = template({ list: data })
+    var html = template({ 'list': data, 'collection': ctx.params.list })
     content = parseHTML(html);
     ready(ctx);
   }

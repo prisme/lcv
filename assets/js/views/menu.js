@@ -57,11 +57,18 @@ function show(){
 function hide(e){
   if( !!e.target.dataset.preventDefault ){
     e.preventDefault()
-    TweenLite.to(_hidden, 0.1, { autoAlpha: 1})
+    TweenLite.to(_hidden, 0.5, { autoAlpha: 1})
   }
 	
-  TweenLite.to(_component, 0.5, { autoAlpha: 0})
-  TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1})
+  TweenLite.to([_openPrompt, _logo], 0.5, { autoAlpha: 1 })
+  TweenLite.to(_component, 0.3, { autoAlpha: 0, 
+    // toggle submenu
+    onComplete: function(){
+      classList(_subPrompt[0].parentNode).remove('active')
+    }
+  })
+
+  
 
   pubsub.emit('menu:close')
 }

@@ -48,11 +48,6 @@ body{
 .pluto-light{ font-family: 'PlutoCondLight' }
 
 
-/* vars */
-:root {
-	--redColor: #e34f42;
-}
-
 /* common */
 .page > footer{
 	z-index: 1;
@@ -101,6 +96,10 @@ body{
 
 body > .logo{
 	right: 100px;
+}
+
+a{
+	color: white;
 }
 
 

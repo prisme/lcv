@@ -1,0 +1,51 @@
+/* vars */
+:root {
+	--redColor: #e34f42;
+}
+
+.section.list{
+	background-image: url(../img/list-default-bg.jpg);
+}
+
+.section.list .titre{
+	/*display: none;*/
+	position: relative;
+	float: left;
+	font-family: 'PlutoCondBold';
+	text-transform: uppercase;
+	color: var(--redColor);
+	font-size: 18px;
+	letter-spacing: 0.2em;
+}
+
+.section.list .items{
+	position: relative;
+	z-index: 1;
+	height: 100%;
+	margin-left: 220px;
+}
+
+.section.list .item{
+	text-decoration: none;
+	color: rgba(255,255,255,0.3);
+	display: block;
+	margin-bottom: 1.0em;
+	transition : color .3s ease-in-out;
+}
+
+.section.list .item:hover{
+	color: rgba(255,255,255,1);
+}
+
+.section.list .item-date{
+	font-family: 'PlutoCondLight';
+	font-size: 18px;
+	text-indent: 2px;
+}
+
+.section.list .item-title{
+	font-family: 'PlutoCondBold';
+	font-size: 36px;
+	text-transform: uppercase;
+}
+

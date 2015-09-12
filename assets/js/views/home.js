@@ -5,7 +5,7 @@ var mustache = require('mustache')
 var parseHTML = require('parseHTML')
 var pubsub = require('pubsub')
 var swiper = require('swiper')
-var _ = require('lodash')
+// var _ = require('lodash')
 
 var template = require('home.hbs')
 
@@ -38,11 +38,18 @@ function loadData(ctx){
     return
   }
 
-  Cockpit.request('/collections/get/spectacles').success(function(items){
+  Cockpit.request('/collections/get/spectacles', {
+    'sort':{
+      'featuredPosition': 1, 
+      'featured': -1, 
+      'date':-1
+    }
+  })
+  .success(function(items){
 
-    var featured = _.filter(items, function(item){ return item.featured == true })
-    featured = _.sortBy(featured, 'featuredPosition')
-    items = featured.concat(items)
+    // var featured = _.filter(items, function(item){ return item.featured == true })
+    // featured = _.sortBy(featured, 'featuredPosition')
+    // items = featured.concat(items)
     data = items.slice(0,3) 
 
     console.log(data)
