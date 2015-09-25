@@ -2,11 +2,12 @@
 	require_once("cockpit/bootstrap.php"); 
 	if ( strstr('bf5aed9f82.url-de-test.ws', $_SERVER['HTTP_HOST'] ) != false ){
 		$_ROOT = '';
+		$api_token = '59770a79e2c9238617d3ff8f';
 	}
 	else{
 		$_ROOT = '/sandbox/lcv';
+		$api_token = '5b51f142b64ac58f835bc360';
 	}
-	$api_token = '59770a79e2c9238617d3ff8f';
 
 ?>
 
@@ -61,7 +62,7 @@
 			<li>
 				<a href="#" class="sub-prompt">les comediens voyageurs</a>
 				<ul class="menu-sub">
-					<li><a href="<?=$_ROOT?>/lcv/marcel-bozonnet">marcel bozonet</a></li>
+					<li><a href="<?=$_ROOT?>/lcv/marcel-bozonnet">marcel bozonnet</a></li>
 					<li><a href="<?=$_ROOT?>/lcv/edito">edito</a></li>
 					<li><a href="<?=$_ROOT?>/lcv/equipe">l'équipe</a></li>
 					<li><a href="<?=$_ROOT?>/lcv/partenaires">partenaires</a></li>

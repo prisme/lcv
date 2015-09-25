@@ -26,19 +26,26 @@ exports.init = function(ROOT) {
     page.exit('/:list/:item', exitInstance);
 
     function enterInstance(ctx, next) { 
-        
+        console.log('enterInstance')
         var instance;
 
         // @todo : switch should be replaced by if indexOf in routes array…
+        // @todo : routes should be pulled from Cockpit
         switch(ctx.params.list){ 
+            // collections
             case 'ateliers' : case 'spectacles' : case 'lcv' : 
                 if( typeof ctx.params.item !== 'undefined'){
                     instance = item
                 }
                 else{
-                    instance = list;
+                    instance = list
                 }
                 break;
+            // static pages
+            case 'presse' : case 'contact' : 
+                instance = item
+                break;
+            // 404
             default :
                 instance = false
         }

@@ -45,7 +45,7 @@ function instance() {
           // Prep data, template specifics
           // ex: if (ctx.params.list == 'spectacles')
           items.forEach(function(e,i){
-            if(e.hasOwnProperty('date')){
+            if(e.hasOwnProperty('date') && typeof e.date === "string"){
               e.date = e.date.split('-')[0]
             }
                 
