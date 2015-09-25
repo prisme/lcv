@@ -23,5 +23,6 @@ module.exports = function(html) {
 
     // Clear reference (maybe not necessary)
     d = null;
+    
     return el;
 };

@@ -22,55 +22,62 @@ function instance() {
   // 'ready' = the content is ready, but still animating or preloading files
   // 'on' = all animated and preloaded
   // 'leaving' = exit has been called, animating out
-  var state = 'off';
+  var state = 'off'
 
-  var data, content, container;
+  var data, content, scrollContainer, gallery
 
   // 1. triggered from router.js
   _this.enter = function (ctx){
-    loadData(ctx);
-  };
+    loadData(ctx)
+  }
 
   // 2. Load data
   function loadData(ctx){
-    state = 'loading';
+    state = 'loading'
 
     if (data || ctx.state.instance){
-      compileTemplate(data, ctx); 
-      return;
+      compileTemplate(data, ctx) 
+      return
     }
-        
+    
+    // static pages
+    if(typeof ctx.params.item == 'undefined' ) {
+      console.log('static')
+    }
+
+    // collections
     Cockpit
     .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
-        .success(function(items){
-          console.log(items)
-          data = items;
+    .success(function(items){
+      console.log(items)
+      data = items
 
-          /* media manager */
-          var imgs = items.map(function(item){ return item.visuel })
-          Cockpit
-            .request('/mediamanager/thumbnails', {
-              images: imgs,
-              w: 1920, h: 1080,
-              options: { quality : 60, mode : 'best_fit' }
-            })
-            .success(function(items){
+      /* media manager => function */
+      var imgs = items.map(function(item){ return item.visuel }) // main 
 
-              // transmute object containing urls to array
-              items = Object.keys(items).map(function (key) {return items[key]});
-              // replace data.visuel props with actual urls
-              data.forEach(function(d,i){ d.visuel = items[i] })
+      Cockpit
+      .request('/mediamanager/thumbnails', {
+        images: imgs,
+        w: 1920, h: 1080,
+        options: { quality : 60, mode : 'best_fit' }
+      })
+      .success(function(imgs){
 
-              // Cache data
-              ctx.state.instance = data;
-              ctx.save();
+        // transmute object containing url to array
+        imgs = Object.keys(imgs).map(function (key) {return imgs[key]})
+        // replace prop with actual url
+        data[0].visuel = imgs[0]
 
-              // if state changed while loading cancel
-              if (state !== 'loading') return;
-              compileTemplate(data, ctx);
-            });
+        // Cache data
+        ctx.state.instance = data
+        ctx.save()
 
-        });
+        // if state changed while loading cancel
+        if (state !== 'loading') return
+        compileTemplate(data, ctx)
+      })
+
+    })
         
   }
 
@@ -78,28 +85,117 @@ function instance() {
   function compileTemplate(data, ctx) {
     data = data || ctx.state.instance // !!!
 
-    var html = template({'item': data});
-    content = parseHTML(html);
-    ready(ctx);
+    var html = template({'item': data})
+    content = parseHTML(html)
+    ready(ctx)
   }
 
   // 4. Content is ready to be shown
   function ready(ctx) {
-    state = 'ready';
+    state = 'ready'
 
-    TweenLite.set(content, {autoAlpha: 0});
-    rootEl.appendChild(content);
+    TweenLite.set(content, {autoAlpha: 0})
+    rootEl.appendChild(content)
 
-    container = document.querySelector('.item .wrap');
-    Ps.initialize(container);
-
+    scrollContainer = document.querySelector('.item .wrap')
+    Ps.initialize(scrollContainer)
+    
     setTimeout(function(){
       var img = document.querySelector('.visual')
       content.style.backgroundImage = 'url(' + img.src + ')'
       TweenLite.set(img, {display:'none'})
     }, 0)
+    
+    if( typeof data[0].photos !== 'undefined' ) { initGallery() }
+
+    animateIn()
+  }
+
+  function initGallery(){
+    
+    var thumbs, zooms
+    var ckpImages = data[0].photos.map(function(item){ return item.path })
+
+    // get thumbs
+    Cockpit
+    .request('/mediamanager/thumbnails', {
+      images: ckpImages,
+      w: 300, h: 300,
+      options: { quality : 100, mode : 'best_fit' }
+    })
+    .success(function(paths){
+      thumbs = Object.keys(paths).map(function (key) {return paths[key]})
+      console.log('thumbs',thumbs)
+      
+      // get zooms
+      Cockpit
+      .request('/mediamanager/thumbnails', {
+        images: ckpImages,
+        w: 1920, h: 1080,
+        options: { quality : 60, mode : 'best_fit' }
+      })
+      .success(function(paths){
+        zooms = Object.keys(paths).map(function (key) {return paths[key]})
+        console.log('zooms',zooms)
+
+        // compile & append template
+        var galleryTpl = require('gallery.hbs')
+
+        var photos = []
+        thumbs.forEach(function(element,index){
+          photos[index] = { 
+            'thumb' : element,
+            'src' : zooms[index]
+          }
+        })
         
-    animateIn();
+        var html = galleryTpl({'photos': photos})
+        var frag = parseHTML(html)
+        scrollContainer.appendChild(frag)
+
+        // initPhotoSwipe
+        var pswpElement = document.querySelectorAll('.pswp')[0];
+        var slides = []
+        ckpImages.forEach(function(e, index){
+          slides[slides.length] = {
+            src : zooms[index],
+            w: 1920, h: 1080,
+            title: e.title
+          }
+        })
+
+        var options = { 
+          mainClass : 'pswp--minimal--dark',
+          history : false,
+          barsSize : {top:0, bottom:0},
+          captionEl : false,
+          counterEl : false,
+          fullscreenEl : false,
+          shareEl : false,
+          bgOpacity : 0.85,
+          tapToClose : true,
+          tapToToggleControls : false,
+          closeOnScroll: false  
+        }
+
+        // galleryEvents
+        var links = document.querySelectorAll('.gallery a')
+        for (var i = 0; i < links.length; i++) {
+
+          links[i].addEventListener('click', function(e){
+
+            var index =  parseInt(this.dataset.index, 10)
+            options.index = index
+            gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, slides, options);
+            gallery.init()
+
+            e.preventDefault()
+          })
+        }
+
+      })
+      
+    })
   }
 
   // 5. Final step, animate in page
@@ -109,9 +205,9 @@ function instance() {
       ease: Power1.easeIn, 
       onComplete: function() {
         // End of animation
-        state = 'on';
+        state = 'on'
       }
-    });
+    })
   }
 
   // Triggered from router.js
@@ -119,41 +215,43 @@ function instance() {
 
     // If user requests to leave before content loaded
     if (state == 'off' || state == 'loading') {
-      console.info('left before loaded');
-      next();
-      return;
+      console.info('left before loaded')
+      next()
+      return
     }
-    if (state == 'ready') console.info('still animating on quit');
+    if (state == 'ready') console.info('still animating on quit')
 
-    state = 'leaving';
+    state = 'leaving'
 
     // Remove instance of self from ctx
-    delete ctx.instance;
+    delete ctx.instance
         
-    animateOut(next);
-  };
+    animateOut(next)
+  }
 
   function animateOut(next) {
     TweenLite.to(content, 0.5, {
       autoAlpha: 0, 
       ease: Power1.easeOut, 
       onComplete: function() {
-        Ps.destroy(container);
-        content.parentNode.removeChild(content);
+        Ps.destroy(scrollContainer)
+        content.parentNode.removeChild(content)
 
         // End of animation
-        state = 'off';
+        state = 'off'
 
         // Let next view start loading
-        next();
+        next()
       }
-    });
+    })
   }
 
   // Listen to global resizes
-  pubsub.on('resize', resize);
+  pubsub.on('resize', resize)
   function resize(_width, _height) { 
-    Ps.update(container);
+    Ps.update(scrollContainer)
   }
+
+  
 
 }
