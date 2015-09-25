@@ -1,19 +1,19 @@
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
-module.exports = instance;
+module.exports = instance
 
-var page = require('page');
-var gsap = require('gsap');
-var parseHTML = require('parseHTML');
-var pubsub = require('pubsub');
-var Ps = require('perfect-scrollbar');
+var page = require('page')
+var gsap = require('gsap')
+var parseHTML = require('parseHTML')
+var pubsub = require('pubsub')
+var Ps = require('perfect-scrollbar')
+var PhotoSwipe = require('photoswipe')
+var PhotoSwipeUI_Default = require('photoswipe/dist/photoswipe-ui-default.min.js')
 
-var template = require('item.hbs');
+var template = require('item.hbs')
 
 function instance() {
-  var _this = this;
-
-  // var dataUrl = 'assets/data/test.json';
+  var _this = this
 
   // Current state of module
   // Can also be 'loading', 'ready', 'on' and 'leaving'

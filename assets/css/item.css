@@ -1,7 +1,7 @@
 .section.item .wrap{
 	position: relative;
 	z-index: 1;
-	height: calc(100% - 5em);
+	height: calc(100% - 10em);
 	margin-left: 17.5vw;
 	margin-top: 10vh;
 }
@@ -47,3 +47,24 @@
 	padding: 0 5vw 0 0;
 }
 @media screen and (max-width: 960px) { .section.item .description td{ padding: 0 4vw 0 0 }}
+
+
+.section.item .gallery {
+	display: flex;
+	justify-content: center;
+	flex-wrap: nowrap;
+}
+.section.item .gallery a{
+	margin: 0 10px 0 0;
+	flex-shrink: 1;
+	min-width: 50px;
+	overflow: hidden;
+	position: relative;
+	background-size: cover;
+	background-repeat: no-repeat;
+	overflow: hidden;
+}
+.section.item .gallery img{
+	opacity: 0;
+	visibility: hidden;
+}

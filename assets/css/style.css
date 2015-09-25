@@ -6,7 +6,9 @@ html,body,div,span,applet,object,iframe,h1,p,blockquote,pre,a,abbr,acronym,addre
 @import url("normalize.css");
 @import url("//hello.myfonts.net/count/2e4864");
 @import url("perfect-scrollbar"); /* added "style" property to this module package.json */
-@import url("swiper");
+@import url("swiper"); 
+@import url("photoswipe"); 
+@import url("photoswipe/default-skin.css"); 
 
 /* globals */
 @import url("global.css");
