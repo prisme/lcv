@@ -470,7 +470,7 @@ pubsub.on('resize', resize)
 function resize(_width, _height) { 
 }
 
-},{"gsap":34,"home.hbs":82,"mustache":54,"parseHTML":3,"pubsub":4,"swiper":80}],7:[function(require,module,exports){
+},{"gsap":34,"home.hbs":83,"mustache":54,"parseHTML":3,"pubsub":4,"swiper":80}],7:[function(require,module,exports){
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
 module.exports = instance
@@ -484,6 +484,7 @@ var PhotoSwipe = require('photoswipe')
 var PhotoSwipeUI_Default = require('photoswipe/dist/photoswipe-ui-default.min.js')
 
 var template = require('item.hbs')
+var tplContact = require('form-contact.hbs')
 
 function instance() {
   var _this = this
@@ -514,11 +515,27 @@ function instance() {
     }
     
     // static pages : /contact
-    if(typeof ctx.params.item == 'undefined' ) {
-      console.log('static')
-    }
+    if( ctx.params.list == 'contact' ){
+      Cockpit.request('/cockpit/call', {
+        module: 'forms',
+        method: 'form',
+        args: ['form', {name: 'Contact', class: 'contact-form'}]
+      })
+      .success(function(response){
+        var html = '<div class="section contact">'
+        html += response
+        html += tplContact()
+        html += '</div>'
+        
+        content = parseHTML(html)
+        eval(content.children[0].innerHTML)
+        ready(ctx)
+      })
 
-    // collections
+      return
+
+    }
+    
     Cockpit
     .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
     .success(function(items){
@@ -527,7 +544,6 @@ function instance() {
 
       if( ctx.params.list == 'lcv' ){
         data[0].statut = 'les comédiens voyageurs'
-        console.log(data)
       }
 
       /* media manager => function */
@@ -554,8 +570,8 @@ function instance() {
         if (state !== 'loading') return
         compileTemplate(data, ctx)
       })
-
     })
+
         
   }
 
@@ -576,15 +592,25 @@ function instance() {
     rootEl.appendChild(content)
 
     scrollContainer = document.querySelector('.item .wrap')
-    Ps.initialize(scrollContainer)
+    if(scrollContainer !== null)
+      Ps.initialize(scrollContainer)
     
+    if( ctx.params.list == 'contact' ){
+      animateIn()
+      return
+    }
+
     setTimeout(function(){
       var img = document.querySelector('.visual')
+      if (img == null) return
+
       content.style.backgroundImage = 'url(' + img.src + ')'
       TweenLite.set(img, {display:'none'})
     }, 0)
     
-    if( typeof data[0].photos !== 'undefined' ) { initGallery() }
+
+    if( typeof data[0].photos !== 'undefined' ) 
+      initGallery()
 
     animateIn()
   }
@@ -734,21 +760,22 @@ function instance() {
 
 }
 
-},{"gallery.hbs":81,"gsap":34,"item.hbs":83,"page":55,"parseHTML":3,"perfect-scrollbar":58,"photoswipe":79,"photoswipe/dist/photoswipe-ui-default.min.js":78,"pubsub":4}],8:[function(require,module,exports){
+},{"form-contact.hbs":81,"gallery.hbs":82,"gsap":34,"item.hbs":84,"page":55,"parseHTML":3,"perfect-scrollbar":58,"photoswipe":79,"photoswipe/dist/photoswipe-ui-default.min.js":78,"pubsub":4}],8:[function(require,module,exports){
 // Use instance template for 'many of a kind' such as list items
 // Will be instantiated and destroyed after use
-module.exports = instance;
+module.exports = instance
 
-var page = require('page');
-var gsap = require('gsap');
-var parseHTML = require('parseHTML');
-var pubsub = require('pubsub');
-var Ps = require('perfect-scrollbar');
+var page = require('page')
+var gsap = require('gsap')
+var parseHTML = require('parseHTML')
+var pubsub = require('pubsub')
+var Ps = require('perfect-scrollbar')
 
-var template = require('list.hbs');
+var template = require('list.hbs')
+var tplPresse = require('list-presse.hbs')
 
 function instance() {
-  var _this = this;
+  var _this = this
 
   // Current state of module :
   // 'off' = the module is inactive
@@ -756,30 +783,24 @@ function instance() {
   // 'ready' = the content is ready, but still animating or preloading files
   // 'on' = all animated and preloaded
   // 'leaving' = exit has been called, animating out
-  var state = 'off';
+  var state = 'off'
 
-  var data, content, container;
+  var data, content, container
 
   // 1. triggered from router.js
   _this.enter = function (ctx){
-    loadData(ctx);
-  };
+    loadData(ctx)
+  }
 
   // 2. Load data
   function loadData(ctx){
-    state = 'loading';
+    state = 'loading'
 
     if (data || ctx.state.instance){
-      compileTemplate(data, ctx); 
-      return;
+      compileTemplate(data, ctx) 
+      return
     }
 
-    // static list : /presse 
-    if(typeof ctx.params.list == 'presse' ) {
-      console.log('presse')
-
-      template = require('list-presse.hbs')
-    }
         
     Cockpit
     .request('/collections/get/'+ctx.params.list, {'sort':{'date':-1}})
@@ -796,7 +817,7 @@ function instance() {
         e.root = rootPath +'/'+ ctx.params.list
       })
 
-      data = items;
+      data = items
         
       // Media manager 
       var imgs = items.map(function(item){ return item.visuel })
@@ -808,20 +829,20 @@ function instance() {
         })
         .success(function(items){
           // transmute object containing urls to array
-          items = Object.keys(items).map(function (key) {return items[key]});
+          items = Object.keys(items).map(function (key) {return items[key]})
           // replace data.visuel props with actual urls
           data.forEach(function(d,i){ d.visuel = items[i] })
 
           // Cache data
-          ctx.state.instance = data;
-          ctx.save();
+          ctx.state.instance = data
+          ctx.save()
 
           // if state changed while loading cancel
-          if (state !== 'loading') return;
-          compileTemplate(data, ctx);
-        });
+          if (state !== 'loading') return
+          compileTemplate(data, ctx)
+        })
         
-    });
+    })
         
   }
 
@@ -829,22 +850,24 @@ function instance() {
   function compileTemplate(data, ctx) {
     data = data || ctx.state.instance
 
+    if( ctx.params.list === 'presse' ) template = tplPresse
+
     var html = template({ 'list': data, 'collection': ctx.params.list })
-    content = parseHTML(html);
-    ready(ctx);
+    content = parseHTML(html)
+    ready(ctx)
   }
 
   // 4. Content is ready to be shown
   function ready(ctx) {
-    state = 'ready';
-    TweenLite.set(content, {autoAlpha: 0});
-    rootEl.appendChild(content);
+    state = 'ready'
+    TweenLite.set(content, {autoAlpha: 0})
+    rootEl.appendChild(content)
 
 
-    container = document.querySelector('.section.list .items');
-    Ps.initialize(container);
+    container = document.querySelector('.section.list .items')
+    Ps.initialize(container)
 
-    animateIn();
+    animateIn()
   }
 
   // 5. Final step, animate in page
@@ -854,9 +877,9 @@ function instance() {
       ease: Power1.easeIn, 
       onComplete: function() {
         // End of animation
-        state = 'on';
+        state = 'on'
       }
-    });
+    })
   }
 
   // Triggered from router.js
@@ -864,46 +887,46 @@ function instance() {
 
     // If user requests to leave before content loaded
     if (state == 'off' || state == 'loading') {
-      console.info('left before loaded');
-      next();
-      return;
+      console.info('left before loaded')
+      next()
+      return
     }
-    if (state == 'ready') console.info('still animating on quit');
+    if (state == 'ready') console.info('still animating on quit')
 
-    state = 'leaving';
+    state = 'leaving'
 
     // Remove instance of self from ctx
-    delete ctx.instance;
+    delete ctx.instance
         
-    animateOut(next);
-  };
+    animateOut(next)
+  }
 
   function animateOut(next) {
     TweenLite.to(content, 0.5, {
       autoAlpha: 0, 
       ease: Power1.easeOut, 
       onComplete: function() {
-        Ps.destroy(container);
-        content.parentNode.removeChild(content);
+        Ps.destroy(container)
+        content.parentNode.removeChild(content)
 
         // End of animation
-        state = 'off';
+        state = 'off'
 
         // Let next view start loading
-        next();
+        next()
       }
-    });
+    })
   }
 
   // Listen to global resizes
-  pubsub.on('resize', resize);
+  pubsub.on('resize', resize)
   function resize(_width, _height) { 
-    Ps.update(container);
+    Ps.update(container)
   }
 
 }
 
-},{"gsap":34,"list-presse.hbs":84,"list.hbs":85,"page":55,"parseHTML":3,"perfect-scrollbar":58,"pubsub":4}],9:[function(require,module,exports){
+},{"gsap":34,"list-presse.hbs":85,"list.hbs":86,"page":55,"parseHTML":3,"perfect-scrollbar":58,"pubsub":4}],9:[function(require,module,exports){
 var gsap = require('gsap')
 var pubsub = require('pubsub')
 var classList = require('dom-classlist')
@@ -34830,6 +34853,17 @@ var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"form-message-success\">\n  Merci\n</div>\n<div class=\"form-message-fail\">\n  Le formulaire contient des erreurs\n</div>\n\n<p>\n  <label for=\"name\">Name</label>\n  <input id=\"name\" name=\"form[name]\"/>\n</p>\n<p>\n  <label for=\"email\">Email</label>\n  <input id=\"email\" name=\"form[email]\"/>\n</p>\n<p>\n  <label for=\"message\">Message</label>\n  <textarea id=\"message\" name=\"form[message]\"></textarea>\n</p>\n<p>\n  <button type=\"submit\">Send</button>\n</p>\n</form>";
+  });
+
+},{"hbsify":35}],82:[function(require,module,exports){
+var Handlebars = require("hbsify").runtime;
+module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
@@ -34863,7 +34897,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":35}],82:[function(require,module,exports){
+},{"hbsify":35}],83:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -34911,7 +34945,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":35}],83:[function(require,module,exports){
+},{"hbsify":35}],84:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -34951,7 +34985,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":35}],84:[function(require,module,exports){
+},{"hbsify":35}],85:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
@@ -34960,8 +34994,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "";
-  buffer += "\n			\n		";
+  var buffer = "", stack1, helper;
+  buffer += "\n			<img src=\"";
+  if (helper = helpers.visuel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.visuel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n			<div class=\"item-quote\"> «";
+  if (helper = helpers.quote) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.quote); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "» </div>\n			<div class=\"item-author\">";
+  if (helper = helpers.author) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.author); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n			<hr/>\n\n		";
   return buffer;
   }
 
@@ -34969,7 +35015,7 @@ function program1(depth0,data) {
   if (helper = helpers.collection) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.collection); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</div>\n\n	<div class=\"items\">\n		";
+    + "</div>\n	<div class=\"list--presse-sub\">EXTRAITS DE PRESSE</div>\n\n	<div class=\"items\">\n		";
   options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
   if (helper = helpers.list) { stack1 = helper.call(depth0, options); }
   else { helper = (depth0 && depth0.list); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
@@ -34979,7 +35025,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-},{"hbsify":35}],85:[function(require,module,exports){
+},{"hbsify":35}],86:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];

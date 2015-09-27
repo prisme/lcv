@@ -11,6 +11,7 @@ var PhotoSwipe = require('photoswipe')
 var PhotoSwipeUI_Default = require('photoswipe/dist/photoswipe-ui-default.min.js')
 
 var template = require('item.hbs')
+var tplContact = require('form-contact.hbs')
 
 function instance() {
   var _this = this
@@ -41,11 +42,27 @@ function instance() {
     }
     
     // static pages : /contact
-    if(typeof ctx.params.item == 'undefined' ) {
-      console.log('static')
-    }
+    if( ctx.params.list == 'contact' ){
+      Cockpit.request('/cockpit/call', {
+        module: 'forms',
+        method: 'form',
+        args: ['form', {name: 'Contact', class: 'contact-form'}]
+      })
+      .success(function(response){
+        var html = '<div class="section contact">'
+        html += response
+        html += tplContact()
+        html += '</div>'
+        
+        content = parseHTML(html)
+        eval(content.children[0].innerHTML)
+        ready(ctx)
+      })
 
-    // collections
+      return
+
+    }
+    
     Cockpit
     .request('/collections/get/'+ctx.params.list, { filter: {titre_slug: ctx.params.item}})
     .success(function(items){
@@ -54,7 +71,6 @@ function instance() {
 
       if( ctx.params.list == 'lcv' ){
         data[0].statut = 'les comédiens voyageurs'
-        console.log(data)
       }
 
       /* media manager => function */
@@ -81,8 +97,8 @@ function instance() {
         if (state !== 'loading') return
         compileTemplate(data, ctx)
       })
-
     })
+
         
   }
 
@@ -103,15 +119,25 @@ function instance() {
     rootEl.appendChild(content)
 
     scrollContainer = document.querySelector('.item .wrap')
-    Ps.initialize(scrollContainer)
+    if(scrollContainer !== null)
+      Ps.initialize(scrollContainer)
     
+    if( ctx.params.list == 'contact' ){
+      animateIn()
+      return
+    }
+
     setTimeout(function(){
       var img = document.querySelector('.visual')
+      if (img == null) return
+
       content.style.backgroundImage = 'url(' + img.src + ')'
       TweenLite.set(img, {display:'none'})
     }, 0)
     
-    if( typeof data[0].photos !== 'undefined' ) { initGallery() }
+
+    if( typeof data[0].photos !== 'undefined' ) 
+      initGallery()
 
     animateIn()
   }

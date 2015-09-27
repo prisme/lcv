@@ -1,13 +1,14 @@
 <div class="section list list--presse">
 	<div class="titre">{{collection}}</div>
+	<div class="list--presse-sub">EXTRAITS DE PRESSE</div>
 
 	<div class="items">
 		{{#list}}
-			{{!-- <a href="{{root}}/{{titre_slug}}" class="item">
-				<div class="item-date">{{date}}</div>
-				<div class="item-title">{{titre}}</div>
-				<!-- <img src="{{visuel}}"> -->
-			</a> --}}
+			<img src="{{visuel}}">
+			<div class="item-quote"> «{{quote}}» </div>
+			<div class="item-author">{{author}}</div>
+			<hr/>
+
 		{{/list}}
 	</div>
 </div>

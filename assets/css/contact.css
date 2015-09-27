@@ -1,0 +1,6 @@
+.section.contact .contact-form{
+	position: relative;
+}
+.section.contact .contact-form button[type=submit]{
+	color: black;
+}

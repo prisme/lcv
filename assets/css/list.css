@@ -49,3 +49,21 @@
 	text-transform: uppercase;
 }
 
+/* presse */
+.section.list--presse .list--presse-sub{
+	font-family: PlutoCondBold;
+	text-transform: uppercase;
+	font-weight: normal;
+	margin: 0.2em 0 0.5em;
+	font-size: 36px;
+	color: #fff;
+}
+.section.list.list--presse .titre{
+	float: none
+}
+.section.list--presse .list--presse-sub,
+.section.list.list--presse .titre{
+	position: relative;
+	z-index: 1;
+	margin-left: 220px;
+}
