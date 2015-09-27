@@ -30,7 +30,7 @@ exports.init = function(ROOT) {
         var instance;
 
         // @todo : switch should be replaced by if indexOf in routes array…
-        // @todo : routes should be pulled from Cockpit
+        // @todo : routes should be pulled dynamically from Cockpit
         switch(ctx.params.list){ 
             // collections
             case 'ateliers' : case 'spectacles' : case 'lcv' : 
@@ -40,17 +40,20 @@ exports.init = function(ROOT) {
                 else{
                     instance = list
                 }
-                break;
+                break
             // static pages
-            case 'presse' : case 'contact' : 
+            case 'presse' : 
+                instance = list
+                break
+            case 'contact' : 
                 instance = item
-                break;
+                break
             // 404
             default :
                 instance = false
         }
 
-        // If url not in list, redirect towards home (404)
+        // If url not in list, redirect to home (404)
         if (!instance) {
             page('/');
             return;
@@ -75,6 +78,7 @@ exports.init = function(ROOT) {
     page.base(ROOT);
     page.start();
 
-    // init globals
+    // init main nav
+    // @todo : pass Cockpit dynamic routes to menu.init => inject dynamic template    
     menu.init();
 };

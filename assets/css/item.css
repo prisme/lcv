@@ -21,10 +21,11 @@
 .section.item .status{
 	color: #ff3437;
 	font-size: 18px;
+	letter-spacing: 0.1em;
 }
 
 .section.item .title{
-	margin-bottom: 0.5em;
+	margin: 0.2em 0 0.5em;
 	font-size: 36px;
 	color: #fff;
 }

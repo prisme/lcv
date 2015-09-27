@@ -36,48 +36,55 @@ function instance() {
       compileTemplate(data, ctx); 
       return;
     }
+
+    // static list : /presse 
+    if(typeof ctx.params.list == 'presse' ) {
+      console.log('presse')
+
+      template = require('list-presse.hbs')
+    }
         
     Cockpit
     .request('/collections/get/'+ctx.params.list, {'sort':{'date':-1}})
+    .success(function(items){
+      console.log(items)
+        
+      // Prep data, template specifics
+      // ex: if (ctx.params.list == 'spectacles')
+      items.forEach(function(e,i){
+        if(e.hasOwnProperty('date') && typeof e.date === "string"){
+          e.date = e.date.split('-')[0]
+        }
+            
+        e.root = rootPath +'/'+ ctx.params.list
+      })
+
+      data = items;
+        
+      // Media manager 
+      var imgs = items.map(function(item){ return item.visuel })
+      Cockpit
+        .request('/mediamanager/thumbnails', {
+          images: imgs,
+          w: 1920, h: 1080,
+          options: { quality : 70, mode : 'best_fit' }
+        })
         .success(function(items){
-          console.log(items)
-            
-          // Prep data, template specifics
-          // ex: if (ctx.params.list == 'spectacles')
-          items.forEach(function(e,i){
-            if(e.hasOwnProperty('date') && typeof e.date === "string"){
-              e.date = e.date.split('-')[0]
-            }
-                
-            e.root = rootPath +'/'+ ctx.params.list
-          })
+          // transmute object containing urls to array
+          items = Object.keys(items).map(function (key) {return items[key]});
+          // replace data.visuel props with actual urls
+          data.forEach(function(d,i){ d.visuel = items[i] })
 
-          data = items;
-            
-          // Media manager 
-          var imgs = items.map(function(item){ return item.visuel })
-          Cockpit
-            .request('/mediamanager/thumbnails', {
-              images: imgs,
-              w: 1920, h: 1080,
-              options: { quality : 70, mode : 'best_fit' }
-            })
-            .success(function(items){
-              // transmute object containing urls to array
-              items = Object.keys(items).map(function (key) {return items[key]});
-              // replace data.visuel props with actual urls
-              data.forEach(function(d,i){ d.visuel = items[i] })
+          // Cache data
+          ctx.state.instance = data;
+          ctx.save();
 
-              // Cache data
-              ctx.state.instance = data;
-              ctx.save();
-
-              // if state changed while loading cancel
-              if (state !== 'loading') return;
-              compileTemplate(data, ctx);
-            });
-            
+          // if state changed while loading cancel
+          if (state !== 'loading') return;
+          compileTemplate(data, ctx);
         });
+        
+    });
         
   }
 

@@ -40,7 +40,7 @@ function instance() {
       return
     }
     
-    // static pages
+    // static pages : /contact
     if(typeof ctx.params.item == 'undefined' ) {
       console.log('static')
     }
@@ -51,6 +51,11 @@ function instance() {
     .success(function(items){
       console.log(items)
       data = items
+
+      if( ctx.params.list == 'lcv' ){
+        data[0].statut = 'les comédiens voyageurs'
+        console.log(data)
+      }
 
       /* media manager => function */
       var imgs = items.map(function(item){ return item.visuel }) // main 

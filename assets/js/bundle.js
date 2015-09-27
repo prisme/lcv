@@ -235,7 +235,7 @@ exports.init = function(ROOT) {
         var instance;
 
         // @todo : switch should be replaced by if indexOf in routes array…
-        // @todo : routes should be pulled from Cockpit
+        // @todo : routes should be pulled dynamically from Cockpit
         switch(ctx.params.list){ 
             // collections
             case 'ateliers' : case 'spectacles' : case 'lcv' : 
@@ -245,17 +245,20 @@ exports.init = function(ROOT) {
                 else{
                     instance = list
                 }
-                break;
+                break
             // static pages
-            case 'presse' : case 'contact' : 
+            case 'presse' : 
+                instance = list
+                break
+            case 'contact' : 
                 instance = item
-                break;
+                break
             // 404
             default :
                 instance = false
         }
 
-        // If url not in list, redirect towards home (404)
+        // If url not in list, redirect to home (404)
         if (!instance) {
             page('/');
             return;
@@ -280,7 +283,8 @@ exports.init = function(ROOT) {
     page.base(ROOT);
     page.start();
 
-    // init globals
+    // init main nav
+    // @todo : pass Cockpit dynamic routes to menu.init => inject dynamic template    
     menu.init();
 };
 },{"home":6,"item":7,"list":8,"menu":9,"page":55}],6:[function(require,module,exports){
@@ -509,7 +513,7 @@ function instance() {
       return
     }
     
-    // static pages
+    // static pages : /contact
     if(typeof ctx.params.item == 'undefined' ) {
       console.log('static')
     }
@@ -520,6 +524,11 @@ function instance() {
     .success(function(items){
       console.log(items)
       data = items
+
+      if( ctx.params.list == 'lcv' ){
+        data[0].statut = 'les comédiens voyageurs'
+        console.log(data)
+      }
 
       /* media manager => function */
       var imgs = items.map(function(item){ return item.visuel }) // main 
@@ -764,48 +773,55 @@ function instance() {
       compileTemplate(data, ctx); 
       return;
     }
+
+    // static list : /presse 
+    if(typeof ctx.params.list == 'presse' ) {
+      console.log('presse')
+
+      template = require('list-presse.hbs')
+    }
         
     Cockpit
     .request('/collections/get/'+ctx.params.list, {'sort':{'date':-1}})
+    .success(function(items){
+      console.log(items)
+        
+      // Prep data, template specifics
+      // ex: if (ctx.params.list == 'spectacles')
+      items.forEach(function(e,i){
+        if(e.hasOwnProperty('date') && typeof e.date === "string"){
+          e.date = e.date.split('-')[0]
+        }
+            
+        e.root = rootPath +'/'+ ctx.params.list
+      })
+
+      data = items;
+        
+      // Media manager 
+      var imgs = items.map(function(item){ return item.visuel })
+      Cockpit
+        .request('/mediamanager/thumbnails', {
+          images: imgs,
+          w: 1920, h: 1080,
+          options: { quality : 70, mode : 'best_fit' }
+        })
         .success(function(items){
-          console.log(items)
-            
-          // Prep data, template specifics
-          // ex: if (ctx.params.list == 'spectacles')
-          items.forEach(function(e,i){
-            if(e.hasOwnProperty('date') && typeof e.date === "string"){
-              e.date = e.date.split('-')[0]
-            }
-                
-            e.root = rootPath +'/'+ ctx.params.list
-          })
+          // transmute object containing urls to array
+          items = Object.keys(items).map(function (key) {return items[key]});
+          // replace data.visuel props with actual urls
+          data.forEach(function(d,i){ d.visuel = items[i] })
 
-          data = items;
-            
-          // Media manager 
-          var imgs = items.map(function(item){ return item.visuel })
-          Cockpit
-            .request('/mediamanager/thumbnails', {
-              images: imgs,
-              w: 1920, h: 1080,
-              options: { quality : 70, mode : 'best_fit' }
-            })
-            .success(function(items){
-              // transmute object containing urls to array
-              items = Object.keys(items).map(function (key) {return items[key]});
-              // replace data.visuel props with actual urls
-              data.forEach(function(d,i){ d.visuel = items[i] })
+          // Cache data
+          ctx.state.instance = data;
+          ctx.save();
 
-              // Cache data
-              ctx.state.instance = data;
-              ctx.save();
-
-              // if state changed while loading cancel
-              if (state !== 'loading') return;
-              compileTemplate(data, ctx);
-            });
-            
+          // if state changed while loading cancel
+          if (state !== 'loading') return;
+          compileTemplate(data, ctx);
         });
+        
+    });
         
   }
 
@@ -887,7 +903,7 @@ function instance() {
 
 }
 
-},{"gsap":34,"list.hbs":84,"page":55,"parseHTML":3,"perfect-scrollbar":58,"pubsub":4}],9:[function(require,module,exports){
+},{"gsap":34,"list-presse.hbs":84,"list.hbs":85,"page":55,"parseHTML":3,"perfect-scrollbar":58,"pubsub":4}],9:[function(require,module,exports){
 var gsap = require('gsap')
 var pubsub = require('pubsub')
 var classList = require('dom-classlist')
@@ -34936,6 +34952,34 @@ function program1(depth0,data) {
   });
 
 },{"hbsify":35}],84:[function(require,module,exports){
+var Handlebars = require("hbsify").runtime;
+module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n			\n		";
+  return buffer;
+  }
+
+  buffer += "<div class=\"section list list--presse\">\n	<div class=\"titre\">";
+  if (helper = helpers.collection) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.collection); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n\n	<div class=\"items\">\n		";
+  options={hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}
+  if (helper = helpers.list) { stack1 = helper.call(depth0, options); }
+  else { helper = (depth0 && depth0.list); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
+  if (!helpers.list) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	</div>\n</div>";
+  return buffer;
+  });
+
+},{"hbsify":35}],85:[function(require,module,exports){
 var Handlebars = require("hbsify").runtime;
 module.exports = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];

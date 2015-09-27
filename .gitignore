@@ -1,6 +1,6 @@
 .sass-cache
 *.css.map
 node_modules
-cockpit/storage
+cockpit
 backup
 media

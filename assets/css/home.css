@@ -10,6 +10,7 @@
 
 .home .swiper-slide{
 	background-size: cover;
+	background-position: bottom;
 	height: 100vh;
 }
 
