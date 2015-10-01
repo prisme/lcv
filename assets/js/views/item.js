@@ -137,7 +137,7 @@ function instance() {
     
 
     if( typeof data[0].photos !== 'undefined' ) 
-      initGallery()
+      setTimeout(initGallery, 1000)
 
     animateIn()
   }
@@ -162,10 +162,11 @@ function instance() {
       Cockpit
       .request('/mediamanager/thumbnails', {
         images: ckpImages,
-        w: window.innerWidth, h: window.innerHeight,
-        options: { quality : 80, mode : 'resize' }
+        w: 1920, h: 1080,
+        options: { quality : 80, mode : 'best_fit' }
       })
       .success(function(paths){
+        console.log(paths)
         zooms = Object.keys(paths).map(function (key) {return paths[key]})
         console.log('zooms',zooms)
 
@@ -184,45 +185,59 @@ function instance() {
         var frag = parseHTML(html)
         scrollContainer.appendChild(frag)
 
-        // initPhotoSwipe
+        // init PhotoSwipe
         var pswpElement = document.querySelectorAll('.pswp')[0];
         var slides = []
-        ckpImages.forEach(function(e, index){
-          slides[slides.length] = {
-            src : zooms[index],
-            w: 1920, h: 1080,
-            title: e.title
-          }
+        zooms.forEach(function(url){
+          // measure zoom image dimensions… T_T
+          var img = document.createElement('img')
+          img.addEventListener('load', function(){
+
+            // add to PhotoSwipe slides object
+            slides[slides.length] = {
+              src : url,
+              w: this.width, h: this.height 
+            }
+
+            var options = { 
+              mainClass : 'pswp--minimal--dark',
+              history : false,
+              barsSize : {top:0, bottom:0},
+              captionEl : false,
+              counterEl : false,
+              fullscreenEl : false,
+              shareEl : false,
+              bgOpacity : 0.85,
+              tapToClose : true,
+              tapToToggleControls : false,
+              closeOnScroll: false  
+            }
+
+            // galleryEvents
+            var links = document.querySelectorAll('.gallery a')
+            for (var i = 0; i < links.length; i++) {
+
+              links[i].addEventListener('click', function(e){
+
+                var index =  parseInt(this.dataset.index, 10)
+                options.index = index
+                gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, slides, options);
+                gallery.init()
+
+                e.preventDefault()
+              })
+            }
+          })
+          img.src = url
+          
+
+
+
+          
+
         })
 
-        var options = { 
-          mainClass : 'pswp--minimal--dark',
-          history : false,
-          barsSize : {top:0, bottom:0},
-          captionEl : false,
-          counterEl : false,
-          fullscreenEl : false,
-          shareEl : false,
-          bgOpacity : 0.85,
-          tapToClose : true,
-          tapToToggleControls : false,
-          closeOnScroll: false  
-        }
-
-        // galleryEvents
-        var links = document.querySelectorAll('.gallery a')
-        for (var i = 0; i < links.length; i++) {
-
-          links[i].addEventListener('click', function(e){
-
-            var index =  parseInt(this.dataset.index, 10)
-            options.index = index
-            gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, slides, options);
-            gallery.init()
-
-            e.preventDefault()
-          })
-        }
+        
 
       })
       
