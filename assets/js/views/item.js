@@ -185,7 +185,7 @@ function instance() {
         var frag = parseHTML(html)
         scrollContainer.appendChild(frag)
 
-        // PhotoSwipe slides object
+        // init PhotoSwipe
         var slides = []
         zooms.forEach(function(url){
           var img = document.createElement('img')
@@ -200,8 +200,6 @@ function instance() {
           img.src = url
         })
 
-        // init PhotoSwipe
-        var pswpElement = document.querySelectorAll('.pswp')[0];
         var options = { 
           mainClass : 'pswp--minimal--dark',
           history : false,
@@ -215,7 +213,8 @@ function instance() {
           tapToToggleControls : false,
           closeOnScroll: false  
         }
-        
+
+        var pswpElement = document.querySelectorAll('.pswp')[0];
         var links = document.querySelectorAll('.gallery a')
         for (var i = 0; i < links.length; i++) {
 
