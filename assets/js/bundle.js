@@ -635,8 +635,8 @@ function instance() {
       Cockpit
       .request('/mediamanager/thumbnails', {
         images: ckpImages,
-        w: 1920, h: 1080,
-        options: { quality : 60, mode : 'best_fit' }
+        w: window.innerWidth, h: window.innerHeight,
+        options: { quality : 80, mode : 'resize' }
       })
       .success(function(paths){
         zooms = Object.keys(paths).map(function (key) {return paths[key]})
