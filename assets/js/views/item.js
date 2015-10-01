@@ -136,8 +136,8 @@ function instance() {
     }, 0)
     
 
-    if( typeof data[0].photos !== 'undefined' ) 
-      setTimeout(initGallery, 1000)
+    if(typeof data[0].photos !== 'undefined') 
+      initGallery()
 
     animateIn()
   }
@@ -185,59 +185,50 @@ function instance() {
         var frag = parseHTML(html)
         scrollContainer.appendChild(frag)
 
-        // init PhotoSwipe
-        var pswpElement = document.querySelectorAll('.pswp')[0];
+        // PhotoSwipe slides object
         var slides = []
         zooms.forEach(function(url){
-          // measure zoom image dimensions… T_T
           var img = document.createElement('img')
+          
           img.addEventListener('load', function(){
-
-            // add to PhotoSwipe slides object
             slides[slides.length] = {
               src : url,
               w: this.width, h: this.height 
             }
-
-            var options = { 
-              mainClass : 'pswp--minimal--dark',
-              history : false,
-              barsSize : {top:0, bottom:0},
-              captionEl : false,
-              counterEl : false,
-              fullscreenEl : false,
-              shareEl : false,
-              bgOpacity : 0.85,
-              tapToClose : true,
-              tapToToggleControls : false,
-              closeOnScroll: false  
-            }
-
-            // galleryEvents
-            var links = document.querySelectorAll('.gallery a')
-            for (var i = 0; i < links.length; i++) {
-
-              links[i].addEventListener('click', function(e){
-
-                var index =  parseInt(this.dataset.index, 10)
-                options.index = index
-                gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, slides, options);
-                gallery.init()
-
-                e.preventDefault()
-              })
-            }
           })
+
           img.src = url
-          
-
-
-
-          
-
         })
 
+        // init PhotoSwipe
+        var pswpElement = document.querySelectorAll('.pswp')[0];
+        var options = { 
+          mainClass : 'pswp--minimal--dark',
+          history : false,
+          barsSize : {top:0, bottom:0},
+          captionEl : false,
+          counterEl : false,
+          fullscreenEl : false,
+          shareEl : false,
+          bgOpacity : 0.85,
+          tapToClose : true,
+          tapToToggleControls : false,
+          closeOnScroll: false  
+        }
         
+        var links = document.querySelectorAll('.gallery a')
+        for (var i = 0; i < links.length; i++) {
+
+          links[i].addEventListener('click', function(e){
+
+            var index =  parseInt(this.dataset.index, 10)
+            options.index = index
+            gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, slides, options);
+            gallery.init()
+
+            e.preventDefault()
+          })
+        }
 
       })
       
