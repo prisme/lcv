@@ -6,6 +6,7 @@ var page = require('page')
 var gsap = require('gsap')
 var parseHTML = require('parseHTML')
 var pubsub = require('pubsub')
+var _ = require('lodash')
 var Ps = require('perfect-scrollbar')
 
 var template = require('list.hbs')
@@ -40,28 +41,41 @@ function instance() {
 
         
     Cockpit
-    .request('/collections/get/'+ctx.params.list, {'sort':{'date':-1}})
+    .request('/collections/get/'+ctx.params.list, {sort: {'spectacle':1}})
     .success(function(items){
       console.log(items)
         
       // Prep data, template specifics
-      // ex: if (ctx.params.list == 'spectacles')
-      items.forEach(function(e,i){
-        if(e.hasOwnProperty('date') && typeof e.date === "string"){
-          e.date = e.date.split('-')[0]
+      items.forEach(function(item){
+        if(item.hasOwnProperty('date') && typeof item.date === 'string'){
+          item.date = item.date.split('-')[0]
         }
-            
-        e.root = rootPath +'/'+ ctx.params.list
+        
+        item.root = rootPath +'/'+ ctx.params.list
+
+        if( ctx.params.list === 'presse' ) {
+          Cockpit
+          .request('/collections/get/spectacles', { filter: {_id: item.spectacle}} )
+          .success(function(spectacle){
+            item.spectacle = {
+              titre : spectacle[0].titre,
+              titre_slug : spectacle[0].titre_slug 
+            }
+          })
+        }
+
       })
 
+
       data = items
+      console.log(data)
         
       // Media manager 
       var imgs = items.map(function(item){ return item.visuel })
       Cockpit
         .request('/mediamanager/thumbnails', {
           images: imgs,
-          w: 1920, h: 1080,
+          w: window.innerWidth, h: window.innerHeight,
           options: { quality : 70, mode : 'best_fit' }
         })
         .success(function(items){
@@ -87,9 +101,10 @@ function instance() {
   function compileTemplate(data, ctx) {
     data = data || ctx.state.instance
 
-    if( ctx.params.list === 'presse' ) template = tplPresse
+    if( ctx.params.list === 'presse' ) 
+      template = tplPresse
 
-    var html = template({ 'list': data, 'collection': ctx.params.list })
+    var html = template({ 'list': data })
     content = parseHTML(html)
     ready(ctx)
   }

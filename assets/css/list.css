@@ -22,7 +22,7 @@
 	position: relative;
 	z-index: 1;
 	height: 100%;
-	margin-left: 220px;
+	margin-left: 10%;
 }
 
 .section.list .item{
@@ -50,6 +50,50 @@
 }
 
 /* presse */
+.section.list--presse .items{
+	height: 80%;
+	font-size: 16px;
+	line-height: 1.3;
+}
+
+.section.list--presse .spectacle{
+	text-transform: uppercase;
+	text-decoration: none;
+	margin-bottom: 42px;
+	clear: both;
+	transition: all .2s;
+}
+.section.list--presse .spectacle:hover{
+	color: rgba(255,255,255,.8);
+}
+
+.section.list--presse .visuel{
+	display: block;
+	height: 50px;
+	margin-bottom: 25px;
+}
+
+.section.list--presse hr{
+	display: block;
+	margin: 42px 0;
+	width: 90%;
+	float: left;
+}
+
+.section.list--presse hr:last-of-type{
+	display: none;
+}
+
+.section.list--presse .quote{
+	font-style: italic;
+}
+
+.section.list--presse .author{
+	margin-top: .5em;
+}
+
+
+
 .section.list--presse .list--presse-sub{
 	font-family: PlutoCondBold;
 	text-transform: uppercase;
@@ -65,5 +109,6 @@
 .section.list.list--presse .titre{
 	position: relative;
 	z-index: 1;
-	margin-left: 220px;
+	margin-left: 10%;
 }
+

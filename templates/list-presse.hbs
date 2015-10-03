@@ -4,11 +4,24 @@
 
 	<div class="items">
 		{{#list}}
-			<img src="{{visuel}}">
-			<div class="item-quote"> «{{quote}}» </div>
-			<div class="item-author">{{author}}</div>
+			<a href="./spectacles/{{spectacle.titre_slug}}" class="spectacle {{spectacle.titre_slug}}">{{spectacle.titre}}</a>
+			<img class="visuel" src="{{visuel}}">
+			<div class="quote"> «{{quote}}» </div>
+			<div class="author">{{author}}</div>
 			<hr/>
-
 		{{/list}}
 	</div>
+
+	<style type="text/css">
+		{{#list}}
+		.{{spectacle.titre_slug}} {
+			display: block;
+		}
+
+		.{{spectacle.titre_slug}} ~ .{{spectacle.titre_slug}}{
+			display: none;
+		}
+
+		{{/list}}
+	</style>
 </div>
