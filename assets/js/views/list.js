@@ -39,11 +39,10 @@ function instance() {
       return
     }
 
-        
     Cockpit
-    .request('/collections/get/'+ctx.params.list, {sort: {'spectacle':1}})
+    .request('/collections/get/'+ctx.params.list, {sort: {'date':-1, 'spectacle':1}})
     .success(function(items){
-      console.log(items)
+      // console.log(items)
         
       // Prep data, template specifics
       items.forEach(function(item){
