@@ -100,10 +100,13 @@ function instance() {
   function compileTemplate(data, ctx) {
     data = data || ctx.state.instance
 
+    var tpl
     if( ctx.params.list === 'presse' ) 
-      template = tplPresse
+      tpl = tplPresse
+    else
+      tpl = template
 
-    var html = template({ 'list': data })
+    var html = tpl({ 'list': data })
     content = parseHTML(html)
     ready(ctx)
   }
