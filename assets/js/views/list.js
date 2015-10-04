@@ -62,35 +62,33 @@ function instance() {
             }
           })
         }
-
       })
 
-
       data = items
-      console.log(data)
+      // console.log(data)
         
       // Media manager 
       var imgs = items.map(function(item){ return item.visuel })
       Cockpit
-        .request('/mediamanager/thumbnails', {
-          images: imgs,
-          w: window.innerWidth, h: window.innerHeight,
-          options: { quality : 70, mode : 'best_fit' }
-        })
-        .success(function(items){
-          // transmute object containing urls to array
-          items = Object.keys(items).map(function (key) {return items[key]})
-          // replace data.visuel props with actual urls
-          data.forEach(function(d,i){ d.visuel = items[i] })
+      .request('/mediamanager/thumbnails', {
+        images: imgs,
+        w: window.innerWidth, h: window.innerHeight,
+        options: { quality : 70, mode : 'best_fit' }
+      })
+      .success(function(items){
+        // transmute object containing urls to array
+        items = Object.keys(items).map(function (key) {return items[key]})
+        // replace data.visuel props with actual urls
+        data.forEach(function(d,i){ d.visuel = items[i] })
 
-          // Cache data
-          ctx.state.instance = data
-          ctx.save()
+        // Cache data
+        ctx.state.instance = data
+        ctx.save()
 
-          // if state changed while loading cancel
-          if (state !== 'loading') return
-          compileTemplate(data, ctx)
-        })
+        // if state changed while loading cancel
+        if (state !== 'loading') return
+        compileTemplate(data, ctx)
+      })
         
     })
         
@@ -138,7 +136,6 @@ function instance() {
 
   // Triggered from router.js
   _this.exit = function (ctx, next){
-
     // If user requests to leave before content loaded
     if (state == 'off' || state == 'loading') {
       console.info('left before loaded')
