@@ -71,7 +71,7 @@
 			<li><a href="<?=$_ROOT?>/spectacles">spectacles</a></li>
 			<li><a href="<?=$_ROOT?>/ateliers">ateliers</a></li>
 			<li><a href="<?=$_ROOT?>/presse">presse</a></li>
-			<li><a href="<?=$_ROOT?>/contact">contact</a></li>
+			<!-- <li><a href="<?=$_ROOT?>/contact">contact</a></li> -->
 			<li><a href="#" class="close">close</a></li>
 		</ul>
 	</div>
@@ -146,7 +146,6 @@
 	        </div>
 
 	    </div>
-
 	</div>
 
 	<script src="assets/js/bundle.js"></script>
