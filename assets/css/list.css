@@ -7,6 +7,10 @@
 	background-image: url(../img/list-default-bg.jpg);
 }
 
+.section.list.list--presse{
+	background-image: url(../img/list-presse.jpg);
+}
+
 .section.list .titre{
 	/*display: none;*/
 	position: relative;
@@ -60,11 +64,11 @@
 	clear: both;
 	text-transform: uppercase;
 	text-decoration: none;
-	margin-bottom: 42px;
+	margin-bottom: 43px;
 	font-size: 1.1em;
 	color: var(--redColor);
 	font-weight: bold;
-	padding: 0 1em 0 0;
+	padding: 0 1em 0 0.1em;
 }
 .section.list--presse .spectacle:hover{
 	text-decoration: underline;
@@ -78,7 +82,7 @@
 
 .section.list--presse hr{
 	display: block;
-	margin: 42px 0;
+	margin: 43px 0;
 	width: 90%;
 	float: left;
 }
