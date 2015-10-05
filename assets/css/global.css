@@ -52,19 +52,18 @@ body{
 .page > footer{
 	z-index: 1;
 	display: flex;
+	justify-content: space-around;
+	align-items: center;
+
 	position: absolute;
 	bottom: 0; left: 0; right: 0; 
 	color: rgba(150,150,150,0.6);
 	text-transform: uppercase;
-	font-size: 0.7vw;
+	font-size: 0.8vw;
 	line-height: 2;
-	padding: 0 100px 50px;
+	padding: 0 5vw 5vh;
 	text-shadow: 1px 0 rgba(0,0,0,0.2);
 	transition: color .7s ease-out;
-}
-
-.page > footer > div{
-	margin-right: 30px;
 }
 
 .page > footer > div a{
@@ -135,4 +134,9 @@ a{
 }
 .section .ps-container>.ps-scrollbar-y-rail>.ps-scrollbar-y{
 	background: white;
+}
+
+.section .ps-container>.ps-scrollbar-x-rail,
+.section .ps-container>.ps-scrollbar-x-rail>.ps-scrollbar-x{
+	display: none;
 }

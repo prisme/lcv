@@ -57,14 +57,17 @@
 }
 
 .section.list--presse .spectacle{
+	clear: both;
 	text-transform: uppercase;
 	text-decoration: none;
 	margin-bottom: 42px;
-	clear: both;
-	transition: all .2s;
+	font-size: 1.1em;
+	color: var(--redColor);
+	font-weight: bold;
+	padding: 0 1em 0 0;
 }
 .section.list--presse .spectacle:hover{
-	color: rgba(255,255,255,.8);
+	text-decoration: underline;
 }
 
 .section.list--presse .visuel{
@@ -86,6 +89,7 @@
 
 .section.list--presse .quote{
 	font-style: italic;
+	padding-right: 1em;
 }
 
 .section.list--presse .author{
@@ -98,7 +102,7 @@
 	font-family: PlutoCondBold;
 	text-transform: uppercase;
 	font-weight: normal;
-	margin: 0.2em 0 0.5em;
+	margin: 1em 0;
 	font-size: 36px;
 	color: #fff;
 }
