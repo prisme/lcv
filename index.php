@@ -1,8 +1,18 @@
-<?php 
-	require_once("cockpit/bootstrap.php"); 
+<?php
+
+	require_once("cockpit/bootstrap.php");
+
 	if ( strstr('bf5aed9f82.url-de-test.ws', $_SERVER['HTTP_HOST'] ) != false ){
+        $_ROOT = '';
+        $api_token = '59770a79e2c9238617d3ff8f';
+    }
+    elseif ( strstr('5cbd2899ca.url-de-test.ws', $_SERVER['HTTP_HOST'] ) != false ){
 		$_ROOT = '';
-		$api_token = '59770a79e2c9238617d3ff8f';
+		$api_token = '181675ae9c21f3fc46d4d61c';
+	}
+	elseif (strstr('www.lescomediensvoyageurs.fr',$_SERVER['HTTP_HOST'] ) != false){
+		$_ROOT = '';
+		$api_token = '181675ae9c21f3fc46d4d61c';
 	}
 	else{
 		$_ROOT = '/sandbox/lcv';
@@ -22,7 +32,7 @@
 
 	<meta name="author" content="@prisme" />
 	<meta name="copyright" content="Les Comédiens Voyageurs" />
-	      
+
 	<meta property="og:title" content="Les Comédiens Voyageurs" />
 	<meta property="og:type" content="website" />
 	<meta property="og:image" content="" />
@@ -53,7 +63,7 @@
 	</div>
 
 	<a href="<?=$_ROOT?>/" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
-	
+
 	<!-- todo : region -->
 	<div class="menu">
 		<a href="<?=$_ROOT?>" class="logo"><img src="assets/img/logo.png" height="23" width="256"></a>
@@ -77,23 +87,23 @@
 	</div>
 
 	<div class="page">
-		
+
 		<footer class="menu-hide">
 			<?php region('footer'); ?>
 		</footer>
 	</div>
-	
+
 	<!-- Root element of PhotoSwipe. Must have class pswp. -->
 	<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
-	    <!-- Background of PhotoSwipe. 
+	    <!-- Background of PhotoSwipe.
 	         It's a separate element as animating opacity is faster than rgba(). -->
 	    <div class="pswp__bg"></div>
 
 	    <!-- Slides wrapper with overflow:hidden. -->
 	    <div class="pswp__scroll-wrap">
 
-	        <!-- Container that holds slides. 
+	        <!-- Container that holds slides.
 	            PhotoSwipe keeps only 3 of them in the DOM to save memory.
 	            Don't modify these 3 pswp__item elements, data is added later on. -->
 	        <div class="pswp__container">
@@ -130,7 +140,7 @@
 	            </div>
 
 	            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-	                <div class="pswp__share-tooltip"></div> 
+	                <div class="pswp__share-tooltip"></div>
 	            </div>
 
 	            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">

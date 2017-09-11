@@ -75,6 +75,7 @@
 }
 
 .section.list--presse .visuel{
+	clear: both;
 	display: block;
 	height: 50px;
 	margin-bottom: 25px;
