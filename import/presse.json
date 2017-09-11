@@ -1,0 +1,52 @@
+[
+  {
+    "author": "Odile Quirot – Le Nouvel Observateur",
+    "quote": "On croyait connaître cette pièce. Non, la voici comme neuve ; cruelle, à vif, nostalgique aussi, et terriblement et à jamais actuelle",
+    "modified": 1443427119,
+    "_uid": "55bba18c680f7doc642427055",
+    "created": 1443376972,
+    "_id": "56082f4d0025fdoc941883990",
+    "visuel": "site:media/presse/nouvelobs1.jpg",
+    "spectacle": "55609dd0a77a2doc648448768"
+  },
+  {
+    "author": "Siegfried Forster - RFI",
+    "quote": "Le public est visiblement touché, ému d’avoir vécu une tragédie grecque, un enfer dantesque qui semble désormais tout près. (…) Jumeler les sentiments, les pensées et les espérances au-delà des frontières, la religion ou la culture, voilà la volonté quand une ville, Limoges en France, exprime artistiquement son empathie avec une autre ville, Alep en Syrie, pour faire face à l’horreur et le désespoir.",
+    "spectacle": "5566033f26920doc1488188696",
+    "modified": 1443977814,
+    "_uid": "55bba18c680f7doc642427055",
+    "created": 1443425635,
+    "_id": "5608ed631fc4edoc1958274701",
+    "visuel": "site:media/presse/rfi1.jpg"
+  },
+  {
+    "author": "Fabienne Pascaud - Telerama",
+    "quote": "La pièce rayonne sous tous ses angles, de la clownerie – Lucky avec un nez rouge cubiste – au mysticisme. L’espace se zébre de fulgurantes intuitions en tout genre.",
+    "spectacle": "55609dd0a77a2doc648448768",
+    "visuel": "site:media/presse/telerama1.jpg",
+    "modified": 1443427099,
+    "_uid": "55bba18c680f7doc642427055",
+    "created": 1443427034,
+    "_id": "5608f2da5b0e0doc1436841231"
+  },
+  {
+    "author": "Frédérique Roussel - Libération",
+    "quote": "Chocolat, Clown Nègre réhabilite le premier artiste noir de la scène française, essuie les lunettes de la mémoire, et veut affirmer que Rafael a lutté contre ceux qui voulaient l’enfermer dans le rôle de victime",
+    "spectacle": "55af74af44f1cdoc1856418726",
+    "visuel": "site:media/presse/libe1.jpg",
+    "modified": 1443427345,
+    "_uid": "55bba18c680f7doc642427055",
+    "created": 1443427274,
+    "_id": "5608f3ca93a7cdoc503001140"
+  },
+  {
+    "author": "Judith Sibony - Blog du Monde",
+    "quote": "Voici un spectacle qui subvertit enfin les limites trop souvent infranchissables entre l’art et la recherche. La belle création de Marcel Bozonnet est un vrai moment de poésie… fondé sur des travaux d’historiens. […] Sans pathos ni condescendance, chacun apporte sa fraicheur à cette pièce qui commémore la vie d’un artiste oublié et sa gloire ambivalente. Et, juste retour des choses, en se faisant lieu de mémoire, leur spectacle se trouve monté très haut par toute la mémoire du théâtre",
+    "spectacle": "55af74af44f1cdoc1856418726",
+    "visuel": "site:media/presse/blogmonde1.jpg",
+    "modified": 1443427444,
+    "_uid": "55bba18c680f7doc642427055",
+    "created": 1443427444,
+    "_id": "5608f47444710doc1974845164"
+  }
+]
